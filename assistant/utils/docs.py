@@ -1,0 +1,374 @@
+# MIT License
+#
+# Copyright (c) 2019 Dan Tès <https://github.com/delivrance>
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+from uuid import uuid4
+
+from pyrogram import (
+    Emoji, InlineQueryResultArticle, InputTextMessageContent, InlineKeyboardMarkup, InlineKeyboardButton, Filters
+)
+from pyrogram.api import types as raw_types, functions as raw_methods
+from pyrogram.api.all import layer
+from pyrogram.client import types, Client
+
+
+class Result:
+    DESCRIPTION_MAX_LEN = 60
+
+    @staticmethod
+    def get_description(item):
+        full = item.__doc__.split("\n")[0]
+        short = full[: Result.DESCRIPTION_MAX_LEN].strip()
+
+        if len(short) >= Result.DESCRIPTION_MAX_LEN - 1:
+            short += "…"
+
+        return short, full
+
+    class Method:
+        DOCS = "https://docs.pyrogram.ml/pyrogram/Client#pyrogram.Client.{}"
+        THUMB = "https://i.imgur.com/S5lY8fy.png"
+
+        def __new__(cls, item):
+            short, full = Result.get_description(item)
+
+            return InlineQueryResultArticle(
+                id=uuid4(),
+                title=f"{item.__name__}",
+                description="Method - " + short,
+                input_message_content=InputTextMessageContent(
+                    f"{Emoji.CLOSED_BOOK} **Pyrogram Docs**\n\n"
+                    f"[{item.__name__}]({cls.DOCS.format(item.__name__)}) - Method\n\n"
+                    f"`{full}`\n",
+                    disable_web_page_preview=True,
+                ),
+                thumb_url=cls.THUMB,
+            )
+
+    class Type:
+        DOCS = "https://docs.pyrogram.ml/pyrogram/Types#pyrogram.{}"
+        THUMB = "https://i.imgur.com/dw1lLBX.png"
+
+        def __new__(cls, item):
+            short, full = Result.get_description(item)
+
+            return InlineQueryResultArticle(
+                id=uuid4(),
+                title=f"{item.__name__}",
+                description="Type - " + short,
+                input_message_content=InputTextMessageContent(
+                    f"{Emoji.GREEN_BOOK} **Pyrogram Docs**\n\n"
+                    f"[{item.__name__}]({cls.DOCS.format(item.__name__)}) - Type\n\n"
+                    f"`{full}`",
+                    disable_web_page_preview=True,
+                ),
+                thumb_url=cls.THUMB,
+            )
+
+    class Filter:
+        DOCS = "https://docs.pyrogram.ml/pyrogram/Filters#pyrogram.Filters.{}"
+        THUMB = "https://i.imgur.com/YRe6cKU.png"
+
+        def __new__(cls, item):
+            return InlineQueryResultArticle(
+                id=uuid4(),
+                title=f"{item.__class__.__name__}",
+                description=f"Filter - {item.__class__.__name__}",
+                input_message_content=InputTextMessageContent(
+                    f"{Emoji.CONTROL_KNOBS} **Pyrogram Docs**\n\n"
+                    f"[{item.__class__.__name__}]({cls.DOCS.format(item.__class__.__name__)}) - Filter",
+                    disable_web_page_preview=True,
+                ),
+                thumb_url=cls.THUMB,
+            )
+
+    class BoundMethod:
+        DOCS = "https://docs.pyrogram.ml/pyrogram/Types#pyrogram.{}.{}"
+        THUMB = "https://i.imgur.com/GxFuuks.png"
+
+        def __new__(cls, item):
+            a, b = item.__qualname__.split(".")
+
+            return InlineQueryResultArticle(
+                id=uuid4(),
+                title=f"{item.__qualname__}",
+                description=f'Bound Method "{b}" of {a}',
+                input_message_content=InputTextMessageContent(
+                    f"{Emoji.LEDGER} **Pyrogram Docs**\n\n"
+                    f"[{item.__qualname__}]({cls.DOCS.format(a, b)}) - Bound Method",
+                    disable_web_page_preview=True,
+                ),
+                thumb_url=cls.THUMB,
+            )
+
+    class RawMethod:
+        DOCS = "https://docs.pyrogram.ml/functions/{}"
+        THUMB = "https://i.imgur.com/NY4uasQ.png"
+
+        def __new__(cls, item):
+            constructor_id = hex(item[1].ID)
+
+            return InlineQueryResultArticle(
+                id=uuid4(),
+                title=f"{item[0]}",
+                description=f"Raw Method - {constructor_id}\nSchema: Layer {layer}",
+                input_message_content=InputTextMessageContent(
+                    f"{Emoji.BLUE_BOOK} **Pyrogram Docs**\n\n"
+                    f"[{item[0]}]({cls.DOCS.format('/'.join(item[0].split('.')))}) - Raw Method\n\n"
+                    f"`ID`: **{constructor_id}**\n"
+                    f"`Schema`: **Layer {layer}**",
+                    disable_web_page_preview=True,
+                ),
+                thumb_url=cls.THUMB,
+            )
+
+    class RawType:
+        DOCS = "https://docs.pyrogram.ml/types/{}"
+        THUMB = "https://i.imgur.com/b33rM21.png"
+
+        def __new__(cls, item):
+            constructor_id = hex(item[1].ID)
+
+            return InlineQueryResultArticle(
+                id=uuid4(),
+                title=f"{item[0]}",
+                description=f"Raw Type - {constructor_id}\nSchema: Layer {layer}",
+                input_message_content=InputTextMessageContent(
+                    f"{Emoji.ORANGE_BOOK} **Pyrogram Docs**\n\n"
+                    f"[{item[0]}]({cls.DOCS.format('/'.join(item[0].split('.')))}) - Raw Type\n\n"
+                    f"`ID`: **{constructor_id}**\n"
+                    f"`Schema`: **Layer {layer}**",
+                    disable_web_page_preview=True,
+                ),
+                thumb_url=cls.THUMB,
+            )
+
+
+METHODS = [
+    (i.lower(), Result.Method(getattr(Client, i)))
+    for i in filter(
+        lambda x: not x.startswith("_")
+                  and x[0].islower()
+                  and getattr(Client, x).__doc__
+                  and callable(getattr(Client, x)),
+        dir(Client)
+    )
+]
+
+TYPES = [
+    (i.lower(), Result.Type(getattr(types, i)))
+    for i in filter(
+        lambda x: not x.startswith("_")
+                  and x[0].isupper()
+                  and getattr(types, x).__doc__,
+        dir(types)
+    )
+]
+
+FILTERS = [
+    (i.lower(), Result.Filter(getattr(Filters, i)))
+    for i in filter(
+        lambda x: not x.startswith("_")
+                  and x[0].islower(),
+        dir(Filters)
+    )
+]
+
+BOUND_METHODS = [
+    (f"{i}.{j}", Result.BoundMethod(getattr(getattr(types, i), j)))
+    for i in filter(
+        lambda x: type(getattr(types, x)) == type,
+        dir(types)
+    )
+    for j in filter(
+        lambda x: not x.startswith("_")
+                  and x[0].islower()
+                  and callable(getattr(getattr(types, i), x))
+                  and x not in ["read", "write", "with_traceback", "continue_propagation", "stop_propagation"],
+        dir(getattr(types, i)),
+    )
+]
+
+RAW_METHODS = []
+
+for i in filter(lambda x: not x.startswith("_"), dir(raw_methods)):
+    if i[0].isupper():
+        RAW_METHODS.append((i, Result.RawMethod((i, getattr(raw_methods, i)))))
+    else:
+        if "Int" not in dir(getattr(raw_methods, i)):
+            for j in filter(lambda x: not x.startswith("_") and x[0].isupper(), dir(getattr(raw_methods, i))):
+                RAW_METHODS.append((f"{i}.{j}", Result.RawMethod((f"{i}.{j}", getattr(getattr(raw_methods, i), j)))))
+
+for i in RAW_METHODS[:]:
+    if "." not in i[0]:
+        RAW_METHODS.remove(i)
+        RAW_METHODS.append(i)
+
+RAW_TYPES = []
+
+for i in filter(lambda x: not x.startswith("_"), dir(raw_types)):
+    if i[0].isupper():
+        RAW_TYPES.append((i, Result.RawType((i, getattr(raw_types, i)))))
+    else:
+        if "Int" not in dir(getattr(raw_types, i)):
+            for j in filter(lambda x: not x.startswith("_") and x[0].isupper(), dir(getattr(raw_types, i))):
+                RAW_TYPES.append((f"{i}.{j}", Result.RawType((f"{i}.{j}", getattr(getattr(raw_types, i), j)))))
+
+for i in RAW_TYPES[:]:
+    if "." not in i[0]:
+        RAW_TYPES.remove(i)
+        RAW_TYPES.append(i)
+
+FIRE_THUMB = "https://i.imgur.com/qhYYqZa.png"
+ROCKET_THUMB = "https://i.imgur.com/PDaYHd8.png"
+ABOUT_BOT_THUMB = "https://i.imgur.com/zRglRz3.png"
+OPEN_BOOK_THUMB = "https://i.imgur.com/v1XSJ1D.png"
+
+# RESOURCES = {
+#     "UpdateHandling": "Update Handling",
+#     "UsingFilters": "Using Filters",
+#     "MoreOnUpdates": "More on Updates",
+#     "ConfigurationFile": "Configuration File",
+#     "SmartPlugins": "Smart Plugins",
+#     "AutoAuthorization": "Auto Authorization",
+#     "CustomizeSessions": "Customize Sessions",
+#     "TgCrypto": "Fast Crypto",
+#     "TextFormatting": "Text Formatting",
+#     "SOCKS5Proxy": "SOCKS5 Proxy",
+#     "BotsInteraction": "Bots Interaction",
+#     "ErrorHandling": "Error Handling",
+#     "TestServers": "Test Servers",
+#     "AdvancedUsage": "Advanced Usage",
+#     "VoiceCalls": "Voice Calls",
+#     "Changelog": "Changelog"
+# }
+
+HELP = (
+    f"{Emoji.ROBOT_FACE} **Pyrogram Assistant**\n\n"
+    f"Use this bot inline to search for Pyrogram methods, types and other resources from https://docs.pyrogram.ml.\n\n"
+
+    f"**Search**\n"
+    f"`@pyrogrambot <terms>` – Pyrogram API\n"
+    f"`@pyrogrambot !r <terms>` – Telegram Raw API\n\n"
+
+    f"**List**\n"
+    f"`@pyrogrambot !m` – Methods\n"
+    f"`@pyrogrambot !t` – Types\n"
+    f"`@pyrogrambot !f` – Filters\n"
+    f"`@pyrogrambot !b` – Bound Methods\n"
+    f"`@pyrogrambot !rm` – Raw Methods\n"
+    f"`@pyrogrambot !rt` – Raw Types\n\n"
+)
+
+DEFAULT_RESULTS = [
+    InlineQueryResultArticle(
+        id=uuid4(),
+        title="About Pyrogram",
+        input_message_content=InputTextMessageContent(
+            f"{Emoji.FIRE} **Pyrogram**\n\n"
+            f"Pyrogram is an elegant, easy-to-use Telegram client library and framework written from the ground up in "
+            f"Python and C. It enables you to easily create custom apps using both user and bot identities (bot API "
+            f"alternative) via the MTProto API.",
+            disable_web_page_preview=True,
+        ),
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(f"{Emoji.BUSTS_IN_SILHOUETTE} Community", url="https://t.me/pyrogramchat"),
+                    InlineKeyboardButton(f"{Emoji.LOUDSPEAKER} Channel", url="https://t.me/pyrogram"),
+                ],
+                [
+                    InlineKeyboardButton(f"{Emoji.CARD_INDEX_DIVIDERS} GitHub", url="https://github.com/pyrogram"),
+                    InlineKeyboardButton(f"{Emoji.OPEN_BOOK} Docs", url="https://docs.pyrogram.ml"),
+                ],
+            ]
+        ),
+        description="Pyrogram is an elegant, easy-to-use Telegram client library and framework.",
+        thumb_url=FIRE_THUMB,
+    ),
+    InlineQueryResultArticle(
+        id=uuid4(),
+        title="About this Bot",
+        input_message_content=InputTextMessageContent(HELP, disable_web_page_preview=True),
+        reply_markup=InlineKeyboardMarkup([[
+            InlineKeyboardButton(
+                f"{Emoji.CARD_INDEX_DIVIDERS} Source Code",
+                url="https://github.com/pyrogram/assistant"
+            ),
+            InlineKeyboardButton(
+                f"{Emoji.FIRE} Go!",
+                switch_inline_query=""
+            )
+        ]]),
+        description="How to use Pyrogram Assistant Bot.",
+        thumb_url=ABOUT_BOT_THUMB,
+    ),
+    InlineQueryResultArticle(
+        id=uuid4(),
+        title="Installation",
+        input_message_content=InputTextMessageContent(
+            f"{Emoji.ROCKET} **Pyrogram Docs**\n\n"
+            f"[Installation](https://docs.pyrogram.ml/start/Installation) - Quick Start\n\n"
+            f"`Get started with installing and upgrading Pyrogram in your system.`",
+            disable_web_page_preview=True,
+        ),
+        description="Quick Start - Get started with installing and upgrading Pyrogram in your system.",
+        thumb_url=ROCKET_THUMB,
+    ),
+    InlineQueryResultArticle(
+        id=uuid4(),
+        title="Setup",
+        input_message_content=InputTextMessageContent(
+            f"{Emoji.ROCKET} **Pyrogram Docs**\n\n"
+            f"[Setup](https://docs.pyrogram.ml/start/Setup) - Quick Start\n\n"
+            f"`Learn how to setup your application project with Pyrogram.`",
+            disable_web_page_preview=True,
+        ),
+        description="Quick Start - Learn how to setup your application project with Pyrogram.",
+        thumb_url=ROCKET_THUMB,
+    ),
+    InlineQueryResultArticle(
+        id=uuid4(),
+        title="Usage",
+        input_message_content=InputTextMessageContent(
+            f"{Emoji.ROCKET} **Pyrogram Docs**\n\n"
+            f"[Usage](https://docs.pyrogram.ml/start/Usage) - Quick Start\n\n"
+            f"`Learn how to use Pyrogram`",
+            disable_web_page_preview=True,
+        ),
+        description="Quick Start - Learn how to use Pyrogram",
+        thumb_url=ROCKET_THUMB,
+    ),
+
+    # *[
+    #     InlineQueryResultArticle(
+    #         id=uuid4(),
+    #         title=v,
+    #         input_message_content=InputTextMessageContent(
+    #             f"{Emoji.OPEN_BOOK} **Pyrogram Docs**\n\n"
+    #             f"[{v}](https://docs.pyrogram.ml/resources/{k}) - Resources",
+    #             disable_web_page_preview=True
+    #         ),
+    #         description="Resources",
+    #         thumb_url=OPEN_BOOK_THUMB
+    #     ) for k, v in RESOURCES.items()
+    # ]
+]
