@@ -6,13 +6,13 @@
 
 This repository contains the source code of [@PyrogramBot](//t.me/pyrogrambot) and the instructions for running a
 copy yourself. Beside its main purpose, the bot is featuring [**Pyrogram Asyncio**](//github.com/pyrogram/pyrogram/issues/181),
-[**Smart Plugins**](//docs.pyrogram.ml/resources/SmartPlugins) and **Inline Mode**; feel free to explore the source code to
+[**Smart Plugins**](//docs.pyrogram.org/topics/smart-plugins) and **Inline Mode**; feel free to explore the source code to
 learn more about these topics.
 
 ## Requirements
 
 - Python 3.6 or higher.
-- A [Telegram API key](//docs.pyrogram.ml/start/Setup#api-keys).
+- A [Telegram API key](//docs.pyrogram.org/intro/setup#api-keys).
 - A [Telegram bot token](//t.me/botfather).
 
 ## Run
@@ -33,4 +33,4 @@ learn more about these topics.
 
 ## License
 
-MIT © 2019 [Dan Tès](//github.com/delivrance)
+MIT © 2019 [Dan](//github.com/delivrance)

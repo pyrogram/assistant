@@ -1,2 +1,2 @@
-git+https://github.com/pyrogram/pyrogram@313bf8952f5e96d255accc8e10d761c118040abf
+git+https://github.com/pyrogram/pyrogram@39439255fdc0f1a5ccd3e38f4f7fcb3429b9bbf1
 tgcrypto

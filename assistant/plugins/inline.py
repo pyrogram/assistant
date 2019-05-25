@@ -65,16 +65,16 @@ async def inline(bot: Assistant, query: InlineQuery):
             results.append(
                 InlineQueryResultArticle(
                     id=uuid4(),
-                    title="Client",
-                    description="Pyrogram Client online documentation page",
+                    title="Methods",
+                    description="Pyrogram Methods online documentation page",
                     input_message_content=InputTextMessageContent(
-                        f"{Emoji.FIRE} **Pyrogram Client**\n\n"
+                        f"{Emoji.FIRE} **Pyrogram Methods**\n\n"
                         f"`This page contains all available high-level Methods existing in Pyrogram v{VERSION}.`"
                     ),
                     reply_markup=InlineKeyboardMarkup([[
                         InlineKeyboardButton(
                             f"{Emoji.OPEN_BOOK} Online docs",
-                            url="https://docs.pyrogram.ml/pyrogram/Client"
+                            url="https://docs.pyrogram.org/api/methods"
                         )
                     ]]),
                     thumb_url=FIRE_THUMB,
@@ -99,7 +99,7 @@ async def inline(bot: Assistant, query: InlineQuery):
                     reply_markup=InlineKeyboardMarkup([[
                         InlineKeyboardButton(
                             f"{Emoji.OPEN_BOOK} Online docs",
-                            url="https://docs.pyrogram.ml/pyrogram/Types"
+                            url="https://docs.pyrogram.org/api/types"
                         )
                     ]]),
                     thumb_url=FIRE_THUMB,
@@ -116,7 +116,7 @@ async def inline(bot: Assistant, query: InlineQuery):
                 InlineQueryResultArticle(
                     id=uuid4(),
                     title="Filters",
-                    description="Pyrogram Raw Types online documentation page",
+                    description="Pyrogram Filters online documentation page",
                     input_message_content=InputTextMessageContent(
                         f"{Emoji.FIRE} **Pyrogram Filters**\n\n"
                         f"`This page contains all library-defined Filters available in Pyrogram v{VERSION}.`"
@@ -124,7 +124,7 @@ async def inline(bot: Assistant, query: InlineQuery):
                     reply_markup=InlineKeyboardMarkup([[
                         InlineKeyboardButton(
                             f"{Emoji.OPEN_BOOK} Online docs",
-                            url="https://docs.pyrogram.ml/pyrogram/Filters"
+                            url="https://docs.pyrogram.org/api/filters"
                         )
                     ]]),
                     thumb_url=FIRE_THUMB,
@@ -134,22 +134,22 @@ async def inline(bot: Assistant, query: InlineQuery):
         for i in docs.FILTERS[offset: offset + NEXT_OFFSET]:
             results.append(i[1])
     elif string == "!b":
-        switch_pm_text = f"{Emoji.CLOSED_BOOK} Pyrogram Type Bound Methods ({len(docs.BOUND_METHODS)})"
+        switch_pm_text = f"{Emoji.CLOSED_BOOK} Pyrogram Bound Methods ({len(docs.BOUND_METHODS)})"
 
         if offset == 0:
             results.append(
                 InlineQueryResultArticle(
                     id=uuid4(),
                     title="Types",
-                    description="Pyrogram Types online documentation page",
+                    description="Pyrogram Bound Methods online documentation page",
                     input_message_content=InputTextMessageContent(
-                        f"{Emoji.FIRE} **Pyrogram Type Bound Methods**\n\n"
-                        f"`This page contains all available high-level Types existing in Pyrogram v{VERSION}.`"
+                        f"{Emoji.FIRE} **Pyrogram Bound Methods**\n\n"
+                        f"`This page contains all available bound methods existing in Pyrogram v{VERSION}.`"
                     ),
                     reply_markup=InlineKeyboardMarkup([[
                         InlineKeyboardButton(
                             f"{Emoji.OPEN_BOOK} Online docs",
-                            url="https://docs.pyrogram.ml/pyrogram/Types"
+                            url="https://docs.pyrogram.org/api/bound-methods"
                         )]]
                     ),
                     thumb_url=FIRE_THUMB,
@@ -175,7 +175,7 @@ async def inline(bot: Assistant, query: InlineQuery):
                     reply_markup=InlineKeyboardMarkup([[
                         InlineKeyboardButton(
                             f"{Emoji.OPEN_BOOK} Online docs",
-                            url="https://docs.pyrogram.ml/functions"
+                            url="https://docs.pyrogram.org/telegram/functions"
                         ),
                         InlineKeyboardButton(
                             f"{Emoji.SCROLL} TL Schema",
@@ -203,7 +203,8 @@ async def inline(bot: Assistant, query: InlineQuery):
                     ),
                     reply_markup=InlineKeyboardMarkup([[
                         InlineKeyboardButton(
-                            f"{Emoji.OPEN_BOOK} Online docs", url="https://docs.pyrogram.ml/types"
+                            f"{Emoji.OPEN_BOOK} Online docs",
+                            url="https://docs.pyrogram.org/telegram/types"
                         ),
                         InlineKeyboardButton(
                             f"{Emoji.SCROLL} TL Schema",
