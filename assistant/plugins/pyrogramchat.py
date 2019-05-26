@@ -31,7 +31,7 @@ from ..utils import docs, callback
 
 ALLOWED_CHATS = [-1001221450384, -1001387666944]
 chat_filter = Filters.create("Chat", lambda _, m: bool(m.chat and m.chat.id in ALLOWED_CHATS))
-
+TARGET = ["PyrogramLounge", "PyrogramChat"]
 MENTION = "[{}](tg://user?id={})"
 MESSAGE = "{} Welcome to [Pyrogram](https://docs.pyrogram.org/)'s group chat {}!"
 
