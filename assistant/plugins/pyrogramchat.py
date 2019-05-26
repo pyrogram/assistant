@@ -28,7 +28,10 @@ from pyrogram import (CallbackQuery, Emoji, Filters, InlineKeyboardButton,
 from ..assistant import Assistant
 from ..utils import docs, callback
 
-TARGET = "pyrogramchat"
+
+ALLOWED_CHATS = [-1001221450384, -1001387666944]
+chat_filter = Filters.create("Chat", lambda _, m: bool(m.chat and m.chat.id in ALLOWED_CHATS))
+
 MENTION = "[{}](tg://user?id={})"
 MESSAGE = "{} Welcome to [Pyrogram](https://docs.pyrogram.org/)'s group chat {}!"
 
@@ -36,7 +39,7 @@ MESSAGE = "{} Welcome to [Pyrogram](https://docs.pyrogram.org/)'s group chat {}!
 
 
 # Filter in only new_chat_members updates generated in TARGET chat
-@Assistant.on_message(Filters.chat(TARGET) & Filters.new_chat_members)
+@Assistant.on_message(chat_filter & Filters.new_chat_members)
 def welcome(bot: Assistant, message: Message):
     for new_user in message.new_chat_members:
         bot.restrict_chat_member(
@@ -63,13 +66,13 @@ def callback_query_pyro(bot: Assistant, cb: CallbackQuery):
     user_id = cb.from_user.id 
     
     chat_id = cb.message.chat.id 
-    
+    cht = [cb.message.chat.username]
     dataid = cb.id
-    
+    res = [item for item in TARGET if item in cht] 
+    username = cb.message.chat.username
     data = data.split(b'%') 
-    
+    chat = ''.join(str(e) for e in res)
     chat_id = str(chat_id)
-    
     action = ''
     confirmed = False
     
@@ -85,11 +88,11 @@ def callback_query_pyro(bot: Assistant, cb: CallbackQuery):
             confirmed = bool(int(args[0]))
             
     if action == b"unres":
-        if cb.message.chat.username == TARGET:
+        if username == chat:
             if user_id == int(userid):
                 if not confirmed:
                     bot.restrict_chat_member(
-                      chat_id=TARGET,
+                      chat_id=chat,
                       user_id=int(userid),
                       until_date=0,
                       can_send_messages=True,
@@ -101,7 +104,7 @@ def callback_query_pyro(bot: Assistant, cb: CallbackQuery):
                     cb.answer("Your restriction were lifted, welcome!")
               
                     bot.edit_message_text(
-                      chat_id='pyrogramchat',
+                      chat_id=chat,
                       message_id=cb.message.message_id,
                       text=cb.message.text.markdown.split('\n')[0],
                       disable_web_page_preview=True,
@@ -110,7 +113,7 @@ def callback_query_pyro(bot: Assistant, cb: CallbackQuery):
                 cb.answer("That wasn't your button!", show_alert=True)
 
 
-@Assistant.on_message(Filters.chat('pyrogramchat') & Filters.command("un", "!"))
+@Assistant.on_message(chat_filter & Filters.command("un", "!"))
 def unrestrict_members(bot: Assistant, message: Message):
     print(message)
     caller = bot.get_chat_member(message.chat.id, message.from_user.id)
