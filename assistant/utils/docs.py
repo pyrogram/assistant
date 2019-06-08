@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import re
 from uuid import uuid4
 
 from pyrogram import (
@@ -42,6 +43,11 @@ class Result:
             short += "…"
 
         return short, full
+
+    @staticmethod
+    def snek(s: str):
+        s = re.sub(r"(.)([A-Z][a-z]+)", r"\1_\2", s)
+        return re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", s).lower()
 
     class Method:
         DOCS = "https://docs.pyrogram.org/api/methods#pyrogram.Client.{}"
@@ -125,6 +131,7 @@ class Result:
 
         def __new__(cls, item):
             constructor_id = hex(item[1].ID)
+            path = cls.DOCS.format(Result.snek(item[0]).replace("_", "-").replace(".-", "/"))
 
             return InlineQueryResultArticle(
                 id=uuid4(),
@@ -132,7 +139,7 @@ class Result:
                 description=f"Raw Method - {constructor_id}\nSchema: Layer {layer}",
                 input_message_content=InputTextMessageContent(
                     f"{Emoji.BLUE_BOOK} **Pyrogram Docs**\n\n"
-                    f"[{item[0]}]({cls.DOCS.format('/'.join(item[0].split('.')))}) - Raw Method\n\n"
+                    f"[{item[0]}]({path}) - Raw Method\n\n"
                     f"`ID`: **{constructor_id}**\n"
                     f"`Schema`: **Layer {layer}**",
                     disable_web_page_preview=True,
@@ -146,6 +153,7 @@ class Result:
 
         def __new__(cls, item):
             constructor_id = hex(item[1].ID)
+            path = cls.DOCS.format(Result.snek(item[0]).replace("_", "-").replace(".-", "/"))
 
             return InlineQueryResultArticle(
                 id=uuid4(),
@@ -153,7 +161,7 @@ class Result:
                 description=f"Raw Type - {constructor_id}\nSchema: Layer {layer}",
                 input_message_content=InputTextMessageContent(
                     f"{Emoji.ORANGE_BOOK} **Pyrogram Docs**\n\n"
-                    f"[{item[0]}]({cls.DOCS.format('/'.join(item[0].split('.')))}) - Raw Type\n\n"
+                    f"[{item[0]}]({path}) - Raw Type\n\n"
                     f"`ID`: **{constructor_id}**\n"
                     f"`Schema`: **Layer {layer}**",
                     disable_web_page_preview=True,
