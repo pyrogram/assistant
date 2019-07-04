@@ -23,6 +23,8 @@
 from configparser import ConfigParser
 
 from pyrogram import Client
+from pyrogram import __version__
+from pyrogram.api.all import layer
 
 
 class Assistant(Client):
@@ -38,12 +40,13 @@ class Assistant(Client):
             bot_token=config.get(name, "bot_token"),
             config_file=config_file,
             workers=16,
-            plugins=dict(root=f"{name}/plugins")
+            plugins=dict(root=f"{name}/plugins"),
+            workdir="."
         )
 
     async def start(self):
         await super().start()
-        print("Pyrogram Assistant started. Hi.")
+        print(f"Assistant for Pyrogram v{__version__} (Layer {layer}) started. Hi.")
 
     async def stop(self):
         await super().stop()

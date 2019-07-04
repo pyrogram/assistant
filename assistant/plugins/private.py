@@ -31,6 +31,7 @@ async def go(bot: Assistant, message: Message):
     await message.reply(
         docs.HELP,
         disable_web_page_preview=True,
+        parse_mode="markdown",
         reply_markup=InlineKeyboardMarkup([[
             InlineKeyboardButton(
                 f"{Emoji.CARD_INDEX_DIVIDERS} Source Code",

@@ -37,7 +37,7 @@ FIRE_THUMB = "https://i.imgur.com/qhYYqZa.png"
 ROCKET_THUMB = "https://i.imgur.com/PDaYHd8.png"
 OPEN_BOOK_THUMB = "https://i.imgur.com/v1XSJ1D.png"
 
-VERSION = ".".join(__version__.split(".")[:3])
+VERSION = __version__.split("-")[0]
 
 
 @Assistant.on_inline_query()
@@ -108,31 +108,6 @@ async def inline(bot: Assistant, query: InlineQuery):
 
         for i in docs.TYPES[offset: offset + NEXT_OFFSET]:
             results.append(i[1])
-    elif string == "!f":
-        switch_pm_text = f"{Emoji.CONTROL_KNOBS} Pyrogram Filters ({len(docs.FILTERS)})"
-
-        if offset == 0:
-            results.append(
-                InlineQueryResultArticle(
-                    id=uuid4(),
-                    title="Filters",
-                    description="Pyrogram Filters online documentation page",
-                    input_message_content=InputTextMessageContent(
-                        f"{Emoji.FIRE} **Pyrogram Filters**\n\n"
-                        f"`This page contains all library-defined Filters available in Pyrogram v{VERSION}.`"
-                    ),
-                    reply_markup=InlineKeyboardMarkup([[
-                        InlineKeyboardButton(
-                            f"{Emoji.OPEN_BOOK} Online docs",
-                            url="https://docs.pyrogram.org/api/filters"
-                        )
-                    ]]),
-                    thumb_url=FIRE_THUMB,
-                )
-            )
-
-        for i in docs.FILTERS[offset: offset + NEXT_OFFSET]:
-            results.append(i[1])
     elif string == "!b":
         switch_pm_text = f"{Emoji.CLOSED_BOOK} Pyrogram Bound Methods ({len(docs.BOUND_METHODS)})"
 
@@ -157,6 +132,56 @@ async def inline(bot: Assistant, query: InlineQuery):
             )
 
         for i in docs.BOUND_METHODS[offset: offset + NEXT_OFFSET]:
+            results.append(i[1])
+    elif string == "!d":
+        switch_pm_text = f"{Emoji.CLOSED_BOOK} Pyrogram Decorators ({len(docs.DECORATORS)})"
+
+        if offset == 0:
+            results.append(
+                InlineQueryResultArticle(
+                    id=uuid4(),
+                    title="Decorators",
+                    description="Pyrogram Decorators online documentation page",
+                    input_message_content=InputTextMessageContent(
+                        f"{Emoji.FIRE} **Pyrogram Decorators**\n\n"
+                        f"`This page contains all available decorators existing in Pyrogram v{VERSION}.`"
+                    ),
+                    reply_markup=InlineKeyboardMarkup([[
+                        InlineKeyboardButton(
+                            f"{Emoji.OPEN_BOOK} Online docs",
+                            url="https://docs.pyrogram.org/api/decorators"
+                        )]]
+                    ),
+                    thumb_url=FIRE_THUMB,
+                )
+            )
+
+        for i in docs.DECORATORS[offset: offset + NEXT_OFFSET]:
+            results.append(i[1])
+    elif string == "!f":
+        switch_pm_text = f"{Emoji.CONTROL_KNOBS} Pyrogram Filters ({len(docs.FILTERS)})"
+
+        if offset == 0:
+            results.append(
+                InlineQueryResultArticle(
+                    id=uuid4(),
+                    title="Filters",
+                    description="Pyrogram Filters online documentation page",
+                    input_message_content=InputTextMessageContent(
+                        f"{Emoji.FIRE} **Pyrogram Filters**\n\n"
+                        f"`This page contains all library-defined Filters available in Pyrogram v{VERSION}.`"
+                    ),
+                    reply_markup=InlineKeyboardMarkup([[
+                        InlineKeyboardButton(
+                            f"{Emoji.OPEN_BOOK} Online docs",
+                            url="https://docs.pyrogram.org/api/filters"
+                        )
+                    ]]),
+                    thumb_url=FIRE_THUMB,
+                )
+            )
+
+        for i in docs.FILTERS[offset: offset + NEXT_OFFSET]:
             results.append(i[1])
     elif string == "!rm":
         switch_pm_text = f"{Emoji.BLUE_BOOK} Raw Methods ({len(docs.RAW_METHODS)})"
@@ -264,11 +289,15 @@ async def inline(bot: Assistant, query: InlineQuery):
                 if string in i[0].lower():
                     results.append(i[1])
 
-            for i in docs.FILTERS:
+            for i in docs.BOUND_METHODS:
                 if string in i[0].lower():
                     results.append(i[1])
 
-            for i in docs.BOUND_METHODS:
+            for i in docs.DECORATORS:
+                if string in i[0].lower():
+                    results.append(i[1])
+
+            for i in docs.FILTERS:
                 if string in i[0].lower():
                     results.append(i[1])
 

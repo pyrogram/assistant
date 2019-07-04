@@ -26,6 +26,7 @@ from uuid import uuid4
 from pyrogram import (
     Emoji, InlineQueryResultArticle, InputTextMessageContent, InlineKeyboardMarkup, InlineKeyboardButton, Filters
 )
+from pyrogram import Object
 from pyrogram.api import types as raw_types, functions as raw_methods
 from pyrogram.api.all import layer
 from pyrogram.client import types, Client
@@ -63,6 +64,26 @@ class Result:
                 input_message_content=InputTextMessageContent(
                     f"{Emoji.CLOSED_BOOK} **Pyrogram Docs**\n\n"
                     f"[{item.__name__}]({cls.DOCS.format(item.__name__)}) - Method\n\n"
+                    f"`{full}`\n",
+                    disable_web_page_preview=True,
+                ),
+                thumb_url=cls.THUMB,
+            )
+
+    class Decorator:
+        DOCS = "https://docs.pyrogram.org/api/decorators#pyrogram.Client.{}"
+        THUMB = "https://i.imgur.com/xp3jld1.png"
+
+        def __new__(cls, item):
+            short, full = Result.get_description(item)
+
+            return InlineQueryResultArticle(
+                id=uuid4(),
+                title=f"{item.__name__}",
+                description="Decorator - " + short,
+                input_message_content=InputTextMessageContent(
+                    f"{Emoji.ARTIST_PALETTE} **Pyrogram Docs**\n\n"
+                    f"[{item.__name__}]({cls.DOCS.format(item.__name__)}) - Decorator\n\n"
                     f"`{full}`\n",
                     disable_web_page_preview=True,
                 ),
@@ -170,26 +191,35 @@ class Result:
             )
 
 
-METHODS = [
-    (i.lower(), Result.Method(getattr(Client, i)))
-    for i in filter(
-        lambda x: not x.startswith("_")
-                  and x[0].islower()
-                  and getattr(Client, x).__doc__
-                  and callable(getattr(Client, x)),
-        dir(Client)
-    )
-]
+METHODS = []
 
-TYPES = [
-    (i.lower(), Result.Type(getattr(types, i)))
-    for i in filter(
-        lambda x: not x.startswith("_")
-                  and x[0].isupper()
-                  and getattr(types, x).__doc__,
-        dir(types)
-    )
-]
+for a in dir(Client):
+    m = getattr(Client, a)
+
+    try:
+        if not a.startswith("_") and a[0].islower() and m.__doc__ and not a.startswith("on_"):
+            METHODS.append((a.lower(), Result.Method(m)))
+    except AttributeError:
+        pass
+
+DECORATORS = []
+
+for a in dir(Client):
+    m = getattr(Client, a)
+
+    try:
+        if not a.startswith("_") and a[0].islower() and m.__doc__ and a.startswith("on_"):
+            DECORATORS.append((a.lower(), Result.Decorator(m)))
+    except AttributeError:
+        pass
+
+TYPES = []
+
+for a in dir(types):
+    t = getattr(types, a)
+
+    if not a.startswith("_") and a[0].isupper() and t.__doc__:
+        TYPES.append((a, Result.Type(t)))
 
 FILTERS = [
     (i.lower(), Result.Filter(getattr(Filters, i)))
@@ -200,20 +230,22 @@ FILTERS = [
     )
 ]
 
-BOUND_METHODS = [
-    (f"{i}.{j}", Result.BoundMethod(getattr(getattr(types, i), j)))
-    for i in filter(
-        lambda x: type(getattr(types, x)) == type,
-        dir(types)
-    )
-    for j in filter(
-        lambda x: not x.startswith("_")
-                  and x[0].islower()
-                  and callable(getattr(getattr(types, i), x))
-                  and x not in ["read", "write", "with_traceback", "continue_propagation", "stop_propagation"],
-        dir(getattr(types, i)),
-    )
-]
+BOUND_METHODS = []
+
+for a in dir(types):
+    try:
+        c = getattr(types, a)
+        if issubclass(c, Object):
+            for m in dir(c):
+                if (
+                    not m.startswith("_")
+                    and callable(getattr(c, m))
+                    and m not in ["default", "read", "write", "with_traceback", "continue_propagation",
+                                  "stop_propagation"]
+                ):
+                    BOUND_METHODS.append((f"{a}.{m}", Result.BoundMethod(getattr(c, m))))
+    except TypeError:
+        pass
 
 RAW_METHODS = []
 
@@ -249,20 +281,23 @@ FIRE_THUMB = "https://i.imgur.com/qhYYqZa.png"
 ROCKET_THUMB = "https://i.imgur.com/PDaYHd8.png"
 ABOUT_BOT_THUMB = "https://i.imgur.com/zRglRz3.png"
 OPEN_BOOK_THUMB = "https://i.imgur.com/v1XSJ1D.png"
+RED_HEART_THUMB = "https://i.imgur.com/66FVFXz.png"
 
 HELP = (
     f"{Emoji.ROBOT_FACE} **Pyrogram Assistant**\n\n"
-    f"Use this bot inline to search for Pyrogram methods, types and other resources from https://docs.pyrogram.org.\n\n"
+    f"You can use this bot in inline mode to search for Pyrogram methods, types and other resources from "
+    f"https://docs.pyrogram.org.\n\n"
 
-    f"**Search**\n"
+    f"**__Search__**\n"
     f"`@pyrogrambot <terms>` – Pyrogram API\n"
     f"`@pyrogrambot !r <terms>` – Telegram Raw API\n\n"
 
-    f"**List**\n"
+    f"**__List__**\n"
     f"`@pyrogrambot !m` – Methods\n"
     f"`@pyrogrambot !t` – Types\n"
     f"`@pyrogrambot !f` – Filters\n"
     f"`@pyrogrambot !b` – Bound Methods\n"
+    f"`@pyrogrambot !d` – Decorators\n"
     f"`@pyrogrambot !rm` – Raw Methods\n"
     f"`@pyrogrambot !rt` – Raw Types\n\n"
 )
@@ -295,7 +330,7 @@ DEFAULT_RESULTS = [
     InlineQueryResultArticle(
         id=uuid4(),
         title="About this Bot",
-        input_message_content=InputTextMessageContent(HELP, disable_web_page_preview=True),
+        input_message_content=InputTextMessageContent(HELP, disable_web_page_preview=True, parse_mode="markdown"),
         reply_markup=InlineKeyboardMarkup([[
             InlineKeyboardButton(
                 f"{Emoji.CARD_INDEX_DIVIDERS} Source Code",
@@ -344,5 +379,17 @@ DEFAULT_RESULTS = [
         ),
         description="List of words with brief explanations.",
         thumb_url=OPEN_BOOK_THUMB,
+    ),
+    InlineQueryResultArticle(
+        id=uuid4(),
+        title="Support",
+        input_message_content=InputTextMessageContent(
+            f"{Emoji.RED_HEART} **Support Pyrogram**\n\n"
+            f"[Support](https://docs.pyrogram.org/support-pyrogram) - Meta\n\n"
+            f"`Ways to show your appreciation.`",
+            disable_web_page_preview=True,
+        ),
+        description="Ways to show your appreciation.",
+        thumb_url=RED_HEART_THUMB,
     ),
 ]
