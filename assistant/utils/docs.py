@@ -21,7 +21,6 @@
 # SOFTWARE.
 
 import re
-from uuid import uuid4
 
 from pyrogram import (
     Emoji, InlineQueryResultArticle, InputTextMessageContent, InlineKeyboardMarkup, InlineKeyboardButton, Filters
@@ -51,14 +50,13 @@ class Result:
         return re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", s).lower()
 
     class Method:
-        DOCS = "https://docs.pyrogram.org/api/methods#pyrogram.Client.{}"
+        DOCS = "https://docs.pyrogram.org/api/methods/{}"
         THUMB = "https://i.imgur.com/S5lY8fy.png"
 
         def __new__(cls, item):
             short, full = Result.get_description(item)
 
             return InlineQueryResultArticle(
-                id=uuid4(),
                 title=f"{item.__name__}",
                 description="Method - " + short,
                 input_message_content=InputTextMessageContent(
@@ -78,7 +76,6 @@ class Result:
             short, full = Result.get_description(item)
 
             return InlineQueryResultArticle(
-                id=uuid4(),
                 title=f"{item.__name__}",
                 description="Decorator - " + short,
                 input_message_content=InputTextMessageContent(
@@ -91,14 +88,13 @@ class Result:
             )
 
     class Type:
-        DOCS = "https://docs.pyrogram.org/api/types#pyrogram.{}"
+        DOCS = "https://docs.pyrogram.org/api/types/{}"
         THUMB = "https://i.imgur.com/dw1lLBX.png"
 
         def __new__(cls, item):
             short, full = Result.get_description(item)
 
             return InlineQueryResultArticle(
-                id=uuid4(),
                 title=f"{item.__name__}",
                 description="Type - " + short,
                 input_message_content=InputTextMessageContent(
@@ -116,7 +112,6 @@ class Result:
 
         def __new__(cls, item):
             return InlineQueryResultArticle(
-                id=uuid4(),
                 title=f"{item.__class__.__name__}",
                 description=f"Filter - {item.__class__.__name__}",
                 input_message_content=InputTextMessageContent(
@@ -128,14 +123,13 @@ class Result:
             )
 
     class BoundMethod:
-        DOCS = "https://docs.pyrogram.org/api/bound-methods#pyrogram.{}.{}"
+        DOCS = "https://docs.pyrogram.org/api/bound-methods/{}.{}"
         THUMB = "https://i.imgur.com/GxFuuks.png"
 
         def __new__(cls, item):
             a, b = item.__qualname__.split(".")
 
             return InlineQueryResultArticle(
-                id=uuid4(),
                 title=f"{item.__qualname__}",
                 description=f'Bound Method "{b}" of {a}',
                 input_message_content=InputTextMessageContent(
@@ -155,7 +149,6 @@ class Result:
             path = cls.DOCS.format(Result.snek(item[0]).replace("_", "-").replace(".-", "/"))
 
             return InlineQueryResultArticle(
-                id=uuid4(),
                 title=f"{item[0]}",
                 description=f"Raw Method - {constructor_id}\nSchema: Layer {layer}",
                 input_message_content=InputTextMessageContent(
@@ -177,7 +170,6 @@ class Result:
             path = cls.DOCS.format(Result.snek(item[0]).replace("_", "-").replace(".-", "/"))
 
             return InlineQueryResultArticle(
-                id=uuid4(),
                 title=f"{item[0]}",
                 description=f"Raw Type - {constructor_id}\nSchema: Layer {layer}",
                 input_message_content=InputTextMessageContent(
@@ -304,7 +296,6 @@ HELP = (
 
 DEFAULT_RESULTS = [
     InlineQueryResultArticle(
-        id=uuid4(),
         title="About Pyrogram",
         input_message_content=InputTextMessageContent(
             f"{Emoji.FIRE} **Pyrogram**\n\n"
@@ -328,7 +319,6 @@ DEFAULT_RESULTS = [
         thumb_url=FIRE_THUMB,
     ),
     InlineQueryResultArticle(
-        id=uuid4(),
         title="About this Bot",
         input_message_content=InputTextMessageContent(HELP, disable_web_page_preview=True, parse_mode="markdown"),
         reply_markup=InlineKeyboardMarkup([[
@@ -345,7 +335,6 @@ DEFAULT_RESULTS = [
         thumb_url=ABOUT_BOT_THUMB,
     ),
     InlineQueryResultArticle(
-        id=uuid4(),
         title="Quick Start",
         input_message_content=InputTextMessageContent(
             f"{Emoji.ROCKET} **Pyrogram Docs**\n\n"
@@ -357,31 +346,6 @@ DEFAULT_RESULTS = [
         thumb_url=ROCKET_THUMB,
     ),
     InlineQueryResultArticle(
-        id=uuid4(),
-        title="FAQ",
-        input_message_content=InputTextMessageContent(
-            f"{Emoji.OPEN_BOOK} **Pyrogram Docs**\n\n"
-            f"[FAQ](https://docs.pyrogram.org/faq) - Meta\n\n"
-            f"`Answers to common Pyrogram questions.`",
-            disable_web_page_preview=True,
-        ),
-        description="Answers to common Pyrogram questions.",
-        thumb_url=OPEN_BOOK_THUMB,
-    ),
-    InlineQueryResultArticle(
-        id=uuid4(),
-        title="Glossary",
-        input_message_content=InputTextMessageContent(
-            f"{Emoji.OPEN_BOOK} **Pyrogram Docs**\n\n"
-            f"[Glossary](https://docs.pyrogram.org/glossary) - Meta\n\n"
-            f"`List of words with brief explanations.`",
-            disable_web_page_preview=True,
-        ),
-        description="List of words with brief explanations.",
-        thumb_url=OPEN_BOOK_THUMB,
-    ),
-    InlineQueryResultArticle(
-        id=uuid4(),
         title="Support",
         input_message_content=InputTextMessageContent(
             f"{Emoji.RED_HEART} **Support Pyrogram**\n\n"

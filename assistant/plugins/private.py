@@ -27,7 +27,7 @@ from ..utils import docs
 
 
 @Assistant.on_message(Filters.private)
-async def go(bot: Assistant, message: Message):
+async def go(_, message: Message):
     await message.reply(
         docs.HELP,
         disable_web_page_preview=True,

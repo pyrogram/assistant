@@ -20,8 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from configparser import ConfigParser
-
 from pyrogram import Client
 from pyrogram import __version__
 from pyrogram.api.all import layer
@@ -30,15 +28,10 @@ from pyrogram.api.all import layer
 class Assistant(Client):
     def __init__(self):
         name = self.__class__.__name__.lower()
-        config_file = f"{name}.ini"
-
-        config = ConfigParser()
-        config.read(config_file)
 
         super().__init__(
             name,
-            bot_token=config.get(name, "bot_token"),
-            config_file=config_file,
+            config_file=f"{name}.ini",
             workers=16,
             plugins=dict(root=f"{name}/plugins"),
             workdir="."
@@ -46,8 +39,9 @@ class Assistant(Client):
 
     async def start(self):
         await super().start()
-        print(f"Assistant for Pyrogram v{__version__} (Layer {layer}) started. Hi.")
+        me = await self.get_me()
+        print(f"Assistant for Pyrogram v{__version__} (Layer {layer}) started on @{me.username}. Hi.")
 
-    async def stop(self):
+    async def stop(self, *args):
         await super().stop()
         print("Pyrogram Assistant stopped. Bye.")

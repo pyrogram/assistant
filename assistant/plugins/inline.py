@@ -20,8 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from uuid import uuid4
-
 from pyrogram import (
     Emoji, InlineQuery, InlineQueryResultArticle, InputTextMessageContent, InlineKeyboardButton,
     InlineKeyboardMarkup, __version__
@@ -41,7 +39,7 @@ VERSION = __version__.split("-")[0]
 
 
 @Assistant.on_inline_query()
-async def inline(bot: Assistant, query: InlineQuery):
+async def inline(_, query: InlineQuery):
     string = query.query.lower()
 
     if string == "":
@@ -64,7 +62,6 @@ async def inline(bot: Assistant, query: InlineQuery):
         if offset == 0:
             results.append(
                 InlineQueryResultArticle(
-                    id=uuid4(),
                     title="Methods",
                     description="Pyrogram Methods online documentation page",
                     input_message_content=InputTextMessageContent(
@@ -89,7 +86,6 @@ async def inline(bot: Assistant, query: InlineQuery):
         if offset == 0:
             results.append(
                 InlineQueryResultArticle(
-                    id=uuid4(),
                     title="Types",
                     description="Pyrogram Types online documentation page",
                     input_message_content=InputTextMessageContent(
@@ -114,7 +110,6 @@ async def inline(bot: Assistant, query: InlineQuery):
         if offset == 0:
             results.append(
                 InlineQueryResultArticle(
-                    id=uuid4(),
                     title="Types",
                     description="Pyrogram Bound Methods online documentation page",
                     input_message_content=InputTextMessageContent(
@@ -139,7 +134,6 @@ async def inline(bot: Assistant, query: InlineQuery):
         if offset == 0:
             results.append(
                 InlineQueryResultArticle(
-                    id=uuid4(),
                     title="Decorators",
                     description="Pyrogram Decorators online documentation page",
                     input_message_content=InputTextMessageContent(
@@ -164,7 +158,6 @@ async def inline(bot: Assistant, query: InlineQuery):
         if offset == 0:
             results.append(
                 InlineQueryResultArticle(
-                    id=uuid4(),
                     title="Filters",
                     description="Pyrogram Filters online documentation page",
                     input_message_content=InputTextMessageContent(
@@ -189,7 +182,6 @@ async def inline(bot: Assistant, query: InlineQuery):
         if offset == 0:
             results.append(
                 InlineQueryResultArticle(
-                    id=uuid4(),
                     title="Raw Methods",
                     description="Pyrogram Raw Methods online documentation page",
                     input_message_content=InputTextMessageContent(
@@ -219,12 +211,12 @@ async def inline(bot: Assistant, query: InlineQuery):
         if offset == 0:
             results.append(
                 InlineQueryResultArticle(
-                    id=uuid4(),
                     title="Raw Types",
                     description="Pyrogram Raw Types online documentation page",
                     input_message_content=InputTextMessageContent(
                         f"{Emoji.FIRE} **Pyrogram Raw Types**\n\n"
-                        f"`This page contains all available Raw Types existing in the Telegram Schema, Layer {docs.layer}.`"
+                        f"`This page contains all available Raw Types existing in the Telegram Schema, Layer "
+                        f"{docs.layer}.`"
                     ),
                     reply_markup=InlineKeyboardMarkup([[
                         InlineKeyboardButton(
