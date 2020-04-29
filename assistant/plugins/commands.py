@@ -25,12 +25,11 @@ import time
 from functools import partial
 
 import aiohttp
-from pyrogram import Filters, Client, Message, Emoji, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, \
-    ChatPermissions
+from ..assistant import Assistant
+from pyrogram import Filters, Message, Emoji, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, ChatPermissions
 from functools import wraps
 
 command = partial(Filters.command, prefixes="#")
-dan_id = 23122162
 
 
 async def reply_and_delete(message: Message, text: str):
@@ -48,14 +47,10 @@ async def reply_and_delete(message: Message, text: str):
     )
 
 
-async def is_admin(bot: Client, message: Message):
-    return (await bot.get_chat_member(message.chat.id, message.from_user.id)).status in ("creator", "administrator")
-
-
-def administrators_only(func):
+def admins_only(func):
     @wraps(func)
-    async def decorator(bot: Client, message: Message):
-        if await is_admin(bot, message):
+    async def decorator(bot: Assistant, message: Message):
+        if bot.is_admin(message):
             await func(bot, message)
 
         await message.delete()
@@ -70,7 +65,7 @@ def administrators_only(func):
 PING_TTL = 5
 
 
-@Client.on_message(command("ping"))
+@Assistant.on_message(command("ping"))
 async def ping(_, message: Message):
     """Ping the assistant"""
     start = time.time()
@@ -98,8 +93,8 @@ TIMEOUT = 3
 MESSAGE_ID_DIFF = 100
 
 
-@Client.on_message(command("neko"))
-@administrators_only
+@Assistant.on_message(command("neko"))
+@admins_only
 async def neko(_, message: Message):
     """Paste very long code"""
     reply = message.reply_to_message
@@ -135,7 +130,7 @@ For a more verbose logging, use `level=logging.DEBUG` instead.
 """
 
 
-@Client.on_message(command("log"))
+@Assistant.on_message(command("log"))
 async def log(_, message: Message):
     """Enable debug logging"""
     await reply_and_delete(message, LOG)
@@ -151,7 +146,7 @@ Please, provide us a **minimal** and **reproducible** example in order to easily
 """
 
 
-@Client.on_message(command("ex"))
+@Assistant.on_message(command("ex"))
 async def ex(_, message: Message):
     """Ask for minimal example"""
     await reply_and_delete(message, EX)
@@ -166,7 +161,7 @@ OT = [
 ]
 
 
-@Client.on_message(command("ot"))
+@Assistant.on_message(command("ot"))
 async def ot(_, message: Message):
     """offtopic conversation"""
     answer = OT[0] if message.chat.id == -1001387666944 else OT[1]  # @PyrogramChat id
@@ -183,7 +178,7 @@ Sorry, your question is not well formulated. Please, be clear and try to follow 
 """
 
 
-@Client.on_message(command("ask"))
+@Assistant.on_message(command("ask"))
 async def ask(_, message: Message):
     """How to ask questions"""
     await reply_and_delete(message, ASK)
@@ -206,7 +201,7 @@ RES = """
 """
 
 
-@Client.on_message(command("res"))
+@Assistant.on_message(command("res"))
 async def res(_, message: Message):
     """Good Python resources"""
     await reply_and_delete(message, RES)
@@ -218,7 +213,7 @@ async def res(_, message: Message):
 LEARN = "Your issue is not related to Pyrogram. Please, learn more Python and try again.\n" + RES
 
 
-@Client.on_message(command("learn"))
+@Assistant.on_message(command("learn"))
 async def learn(_, message: Message):
     """Tell to learn Python"""
     await reply_and_delete(message, LEARN)
@@ -244,7 +239,7 @@ RULES = """
 """
 
 
-@Client.on_message(command("rules"))
+@Assistant.on_message(command("rules"))
 async def rules(_, message: Message):
     """Show Pyrogram rules"""
     # noinspection PyBroadException
@@ -279,7 +274,7 @@ __If you want to host and maintain a group dedicated to your language, let us kn
 """
 
 
-@Client.on_message(command("groups"))
+@Assistant.on_message(command("groups"))
 async def groups(_, message: Message):
     """Show all groups"""
     await reply_and_delete(message, GROUPS)
@@ -294,7 +289,7 @@ FAQ = (
 )
 
 
-@Client.on_message(command("faq"))
+@Assistant.on_message(command("faq"))
 async def faq(_, message: Message):
     """Answer is in the FAQ"""
     await reply_and_delete(message, FAQ)
@@ -306,7 +301,7 @@ async def faq(_, message: Message):
 RTD = "Please, read the docs: https://docs.pyrogram.org"
 
 
-@Client.on_message(command("rtd"))
+@Assistant.on_message(command("rtd"))
 async def rtd(_, message: Message):
     """Tell to Read the Docs"""
     await reply_and_delete(message, RTD)
@@ -322,7 +317,7 @@ DEV = (
 )
 
 
-@Client.on_message(command("dev"))
+@Assistant.on_message(command("dev"))
 async def dev(_, message: Message):
     """Fixed in dev branch"""
     await reply_and_delete(message, DEV)
@@ -333,9 +328,9 @@ async def dev(_, message: Message):
 MESSAGE_DATE_DIFF = 43200  # 12h
 
 
-@Client.on_message(command("delete"))
-@administrators_only
-async def delete(bot: Client, message: Message):
+@Assistant.on_message(command("delete"))
+@admins_only
+async def delete(bot: Assistant, message: Message):
     """Delete messages"""
     reply = message.reply_to_message
 
@@ -343,7 +338,7 @@ async def delete(bot: Client, message: Message):
         return
 
     # Don't delete admins messages
-    if await is_admin(bot, reply):
+    if bot.is_admin(reply):
         m = await message.reply("Sorry, I don't delete administrators' messages.")
         await asyncio.sleep(5)
         await m.delete()
@@ -385,14 +380,14 @@ async def delete(bot: Client, message: Message):
 
 ################################
 
-@Client.on_callback_query()
-async def unban(bot: Client, query: CallbackQuery):
+@Assistant.on_callback_query()
+async def unban(bot: Assistant, query: CallbackQuery):
     action, user_id = query.data.split(".")
     user_id = int(user_id)
     text = query.message.text
 
     if action == "unban":
-        if query.from_user.id != dan_id:
+        if query.from_user.id != bot.creator_id:
             await query.answer("Only Dan can pardon banned users", show_alert=True)
             return
 
@@ -417,9 +412,9 @@ async def unban(bot: Client, query: CallbackQuery):
         await query.edit_message_text(f"~~{text.markdown}~~\n\nPardoned")
 
 
-@Client.on_message(command("ban"))
-@administrators_only
-async def ban(bot: Client, message: Message):
+@Assistant.on_message(command("ban"))
+@admins_only
+async def ban(bot: Assistant, message: Message):
     """Ban a user in chat"""
     reply = message.reply_to_message
 
@@ -427,7 +422,7 @@ async def ban(bot: Client, message: Message):
         return
 
     # Don't ban admins
-    if await is_admin(bot, reply):
+    if bot.is_admin(reply):
         m = await message.reply("Sorry, I don't ban administrators")
         await asyncio.sleep(5)
         await m.delete()
@@ -462,7 +457,7 @@ HELP = f"""
 
 
 # noinspection PyShadowingBuiltins
-@Client.on_message(command("help"))
+@Assistant.on_message(command("help"))
 async def help(_, message: Message):
     """Show this message"""
     await reply_and_delete(message, HELP)

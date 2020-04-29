@@ -20,7 +20,7 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #  SOFTWARE.
 
-from pyrogram import Client
+from pyrogram import Client, Message
 from pyrogram import __version__
 from pyrogram.api.all import layer
 
@@ -37,11 +37,32 @@ class Assistant(Client):
             workdir="."
         )
 
+        self.creator_id = 23122162
+        self.admins = {
+            # Inn (pyrogramchat)
+            -1001387666944: {self.creator_id},
+
+            # Lounge (pyrogramlounge)
+            -1001221450384: {self.creator_id}
+        }
+
     async def start(self):
         await super().start()
+
         me = await self.get_me()
         print(f"Assistant for Pyrogram v{__version__} (Layer {layer}) started on @{me.username}. Hi.")
+
+        # Fetch current admins from chats
+        for chat, admins in self.admins.items():
+            async for admin in self.iter_chat_members(chat, filter="administrators"):
+                admins.add(admin.user.id)
 
     async def stop(self, *args):
         await super().stop()
         print("Pyrogram Assistant stopped. Bye.")
+
+    def is_admin(self, message: Message) -> bool:
+        user_id = message.from_user.id
+        chat_id = message.chat.id
+
+        return user_id in self.admins[chat_id]
