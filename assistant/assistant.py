@@ -26,6 +26,10 @@ from pyrogram.api.all import layer
 
 
 class Assistant(Client):
+    CREATOR_ID = 23122162  # Dan (haskell)
+    CHATS = [-1001387666944,  # Inn (pyrogramchat)
+             -1001221450384]  # Lounge (pyrogramlounge)
+
     def __init__(self):
         name = self.__class__.__name__.lower()
 
@@ -37,13 +41,9 @@ class Assistant(Client):
             workdir="."
         )
 
-        self.creator_id = 23122162
         self.admins = {
-            # Inn (pyrogramchat)
-            -1001387666944: {self.creator_id},
-
-            # Lounge (pyrogramlounge)
-            -1001221450384: {self.creator_id}
+            chat: {Assistant.CREATOR_ID}
+            for chat in Assistant.CHATS
         }
 
     async def start(self):

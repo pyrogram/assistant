@@ -387,7 +387,7 @@ async def unban(bot: Assistant, query: CallbackQuery):
     text = query.message.text
 
     if action == "unban":
-        if query.from_user.id != bot.creator_id:
+        if query.from_user.id != Assistant.CREATOR_ID:
             await query.answer("Only Dan can pardon banned users", show_alert=True)
             return
 
