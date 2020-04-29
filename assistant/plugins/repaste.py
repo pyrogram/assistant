@@ -25,7 +25,7 @@ import asyncio
 import aiohttp
 from pyrogram import Client, Filters, Message
 
-NEKO = "> nekobin.com/"
+NEKO = "> nekobin.com/{}.py"
 ENDPOINT = "https://nekobin.com/api/documents"
 ANSWER = "**Please use Nekobin for pastes.**\n"
 TIMEOUT = 3
@@ -56,7 +56,9 @@ async def get_and_post(paste_url: str):
 
 async def reply_pastes(new_pastes: str, message: Message):
     """Format a list of keys to a string and reply it."""
-    new_pastes = [NEKO + paste for paste in new_pastes if not isinstance(paste, int)]
+    new_pastes = [
+        NEKO.format(paste) for paste in new_pastes if not isinstance(paste, int)
+    ]
     if len(new_pastes) > 0:
         await message.reply_text(
             text=ANSWER + "\n".join(new_pastes), disable_web_page_preview=True,
