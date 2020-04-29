@@ -69,17 +69,9 @@ PING_TTL = 5
 async def ping(_, message: Message):
     """Ping the assistant"""
     start = time.time()
-    reply = await message.reply("...")
+    reply = await message.reply_text("...")
     delta_ping = time.time() - start
-
-    for i in range(PING_TTL, 0, -1):
-        start = time.time()
-        await reply.edit(f"**Pong!** `{delta_ping * 1000:.3f} ms` ({i})")
-        delta_edit = time.time() - start
-
-        await asyncio.sleep(1 - delta_edit)
-
-    await asyncio.gather(reply.delete(), message.delete())
+    await reply.edit_text(f"**Pong!** `{delta_ping * 1000:.3f} ms`")
 
 
 ################################
