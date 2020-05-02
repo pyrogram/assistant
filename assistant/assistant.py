@@ -28,7 +28,8 @@ from pyrogram.api.all import layer
 class Assistant(Client):
     CREATOR_ID = 23122162  # Dan (haskell)
     CHATS = [-1001387666944,  # Inn (pyrogramchat)
-             -1001221450384]  # Lounge (pyrogramlounge)
+             -1001221450384,  # Lounge (pyrogramlounge)
+             -1001355792138]  # Pyrogram Italia
 
     def __init__(self):
         name = self.__class__.__name__.lower()
