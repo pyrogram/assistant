@@ -228,6 +228,7 @@ RULES = """
 ` 9.` "Doesn't work" means nothing. Explain issues in details.
 `10.` Don't ask if your code is correct. Ask if you encounter errors.
 `11.` Make use of nekobin.com for sharing long code.
+`12.` Don't send photos unless they are meaningful and small.
 """
 
 
