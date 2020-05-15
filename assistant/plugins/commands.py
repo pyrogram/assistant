@@ -296,8 +296,21 @@ RTD = "Please, read the docs: https://docs.pyrogram.org"
 
 @Assistant.on_message(command("rtd"))
 async def rtd(_, message: Message):
-    """Tell to Read the Docs"""
+    """Tell to RTD (gentle)"""
     await reply_and_delete(message, RTD)
+
+
+################################
+
+
+RTFD = "Go read the fscking docs: https://docs.pyrogram.org"
+
+
+@Assistant.on_message(command("rtfd"))
+@admins_only
+async def rtfd(_, message: Message):
+    """Tell to RTFD (rude)"""
+    await reply_and_delete(message, RTFD)
 
 
 ################################
