@@ -11,17 +11,16 @@ from .get_faqs import faq
 
 def _search_title(query):
     q = ''.join(map(str.strip, query.query.split('!f')))
-    print(tuple(faq))
     return [(title, url) for title, url in faq if q.lower() in title.lower()]
 
 
 @Client.on_inline_query(Filters.create(
     lambda _, i: i.query.strip().startswith('!f')
 ))
-def answer_inline_query(_, i: InlineQuery):
+async def answer_inline_query(_, i: InlineQuery):
     faqs = _search_title(i)
     if not faqs:
-        i.answer(
+        await i.answer(
             results=[],
             switch_pm_text='❌ nothing to show! ❌',
             switch_pm_parameter='start'
@@ -29,7 +28,7 @@ def answer_inline_query(_, i: InlineQuery):
 
 
     else:
-        i.answer(
+        await i.answer(
             results=[
                 InlineQueryResultArticle(
                     title=title,
