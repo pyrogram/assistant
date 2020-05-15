@@ -217,18 +217,18 @@ async def learn(_, message: Message):
 RULES = """
 **Pyrogram Rules**
 
-` 1.` English only. Other groups by language: #groups.
+` 1.` English only. Other groups: #groups.
 ` 2.` Spam, flood and hate speech is forbidden.
 ` 3.` Talks unrelated to Pyrogram are not allowed.
-` 4.` The offtopic group is at @PyrogramLounge.
-` 5.` Keep unrelated media/emojis to a minimum.
-` 6.` Use your common sense (yes, you have it too).
-` 7.` Be nice and respect other people.
-` 8.` Ask before sending PMs and respect answers.
-` 9.` "Doesn't work" means nothing. Explain issues in details.
-`10.` Don't ask if your code is correct. Ask if you encounter errors.
-`11.` Make use of nekobin.com for sharing long code.
-`12.` Don't send photos unless they are meaningful and small.
+` 4.` Keep unrelated media/emojis to a minimum.
+` 5.` Be nice, respect people and use common sense.
+` 6.` Ask before sending PMs and respect answers.
+` 7.` "Doesn't work" means nothing. Explain in details.
+` 8.` Ask if you encounter errors, not if code is correct.
+` 9.` Make use of nekobin.com for sharing long code.
+`10.` No photos unless they are meaningful and small.
+
+Rules are subject to change without notice.
 """
 
 
