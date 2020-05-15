@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
-from requests import get
+from aiohttp import ClientSession
+import asyncio
 
 
 class Scraper:
@@ -9,10 +10,14 @@ class Scraper:
     URL_DOCS = "https://docs.pyrogram.org/faq"
     def __init__(self):
         self.__faqs = None
-        request = get(Scraper.URL_DOCS)
-        self.scraper = BeautifulSoup(request.text, 'html.parser')
-
-
+        self.scraper = asyncio.run(self.request())
+    
+    async def request(self):
+        async with ClientSession() as request:
+            async with request.get(X.URL_DOCS) as resp:
+                scraper = BeautifulSoup(await resp.text(), 'html.parser')
+                return scraper
+    
     @staticmethod
     def _make_url_absolute(url: str) -> str:
         if not url.startswith('http'):
