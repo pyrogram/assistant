@@ -24,7 +24,7 @@ from ..assistant import Assistant
 from pyrogram import Filters, Message, Emoji
 
 
-@Assistant.on_message(Filters.chat(Assistant.CHATS) & Filters.new_chat_members)
+@Assistant.on_message(Filters.chat(Assistant.chats) & Filters.new_chat_members)
 async def welcome(_, message: Message):
     new_members = [f"{u:mention}" for u in message.new_chat_members]
     text = f"{Emoji.SPARKLES} Welcome to [Pyrogram](https://docs.pyrogram.org/)'s group chat {', '.join(new_members)}!"
