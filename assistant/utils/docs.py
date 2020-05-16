@@ -21,7 +21,6 @@
 #  SOFTWARE.
 
 import re
-import textwrap
 
 from pyrogram import (
     Emoji, InlineQueryResultArticle, InputTextMessageContent, InlineKeyboardMarkup, InlineKeyboardButton, Filters
