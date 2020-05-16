@@ -21,6 +21,7 @@
 #  SOFTWARE.
 
 import re
+import textwrap
 
 from pyrogram import (
     Emoji, InlineQueryResultArticle, InputTextMessageContent, InlineKeyboardMarkup, InlineKeyboardButton, Filters
@@ -274,6 +275,7 @@ ROCKET_THUMB = "https://i.imgur.com/PDaYHd8.png"
 ABOUT_BOT_THUMB = "https://i.imgur.com/zRglRz3.png"
 OPEN_BOOK_THUMB = "https://i.imgur.com/v1XSJ1D.png"
 RED_HEART_THUMB = "https://i.imgur.com/66FVFXz.png"
+SCROLL_THUMB = "https://i.imgur.com/L1u0VlX.png"
 
 HELP = (
     f"{Emoji.ROBOT_FACE} **Pyrogram Assistant**\n\n"
@@ -356,4 +358,31 @@ DEFAULT_RESULTS = [
         description="Ways to show your appreciation.",
         thumb_url=RED_HEART_THUMB,
     ),
+]
+
+rules = """
+**Pyrogram Rules**
+
+` 1.` English only. Other groups: #groups.
+` 2.` Spam, flood and hate speech is forbidden.
+` 3.` Talks unrelated to Pyrogram are not allowed.
+` 4.` Keep unrelated media/emojis to a minimum.
+` 5.` Be nice, respect people and use common sense.
+` 6.` Ask before sending PMs and respect answers.
+` 7.` \"Doesn't work\" means nothing. Explain in details.
+` 8.` Ask if you encounter errors, not if code is correct.
+` 9.` Make use of nekobin.com for sharing long code.
+`10.` No photos unless they are meaningful and small.
+
+__Rules are subject to change without notice.__
+"""
+
+RULES = [
+    InlineQueryResultArticle(
+        title=f"Rule {i}",
+        description=re.sub(r"` ?\d+.` ", "", rule),
+        input_message_content=InputTextMessageContent("**Pyrogram Rules**\n\n" + rule),
+        thumb_url=SCROLL_THUMB,
+    )
+    for i, rule in enumerate(rules.split("\n")[3:-3], 1)
 ]

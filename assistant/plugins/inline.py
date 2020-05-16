@@ -20,8 +20,10 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #  SOFTWARE.
 
+import textwrap
+
 from pyrogram import (
-    Emoji, InlineQuery, InlineQueryResultArticle, InputTextMessageContent, InlineKeyboardButton,
+    Emoji, InlineQuery, InlineQueryResultArticle, InlineQueryResultPhoto, InputTextMessageContent, InlineKeyboardButton,
     InlineKeyboardMarkup, __version__
 )
 
@@ -34,6 +36,7 @@ CACHE_TIME = 5
 FIRE_THUMB = "https://i.imgur.com/qhYYqZa.png"
 ROCKET_THUMB = "https://i.imgur.com/PDaYHd8.png"
 OPEN_BOOK_THUMB = "https://i.imgur.com/v1XSJ1D.png"
+SCROLL_THUMB = "https://i.imgur.com/L1u0VlX.png"
 
 VERSION = __version__.split("-")[0]
 
@@ -234,6 +237,35 @@ async def inline(_, query: InlineQuery):
 
         for i in docs.RAW_TYPES[offset: offset + NEXT_OFFSET]:
             results.append(i[1])
+    elif string == "rules":
+        switch_pm_text = f"{Emoji.SCROLL} Chat Rules"
+
+        if offset == 0:
+            results.append(
+                InlineQueryResultArticle(
+                    title="Chat Rules",
+                    description="These are the rules for the Pyrogram Inn and the chats for other languages.",
+                    input_message_content=InputTextMessageContent(docs.rules),
+                    thumb_url=FIRE_THUMB,
+                )
+            )
+
+        for i in docs.RULES[offset: offset + NEXT_OFFSET]:
+            results.append(i)
+    elif string == "colin":
+        switch_pm_text = f"{Emoji.SHARK} Hidden Shark"
+
+        if offset == 0:
+            results.append(
+                InlineQueryResultPhoto(
+                    photo_url="https://i.imgur.com/f32hngs.jpg",
+                    # thumb_url="https://i.imgur.com/f32hngs.jpg",
+                    title="You found the secret Sharkception :O",
+                    description="You might not get anything from it, but you can feel proud to have found me!",
+                    caption=f"Hey, I found @ColinShark {Emoji.SHARK}",
+                    # input_message_content=InputTextMessageContent(f"Hey, I found @ColinShark {Emoji.SHARK}"),
+                )
+            )
 
     if results:
         await query.answer(
@@ -242,6 +274,7 @@ async def inline(_, query: InlineQuery):
             switch_pm_text=switch_pm_text,
             switch_pm_parameter="start",
             next_offset=str(offset + NEXT_OFFSET),
+            is_gallery=False
         )
     else:
         if offset:
