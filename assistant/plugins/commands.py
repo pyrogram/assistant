@@ -243,8 +243,9 @@ async def repost_rules(_, message: Message):
     if index == 0:
         index = 10
     split = RULES.split("\n")
-    text = f"{split[0]}\n\n{split[3:-3][index-1]}"
-    # -1 because we have a literal in the message, not a list index :D
+    text = f"{split[1]}\n\n{split[3:-3][index-1]}"
+    # First split index is a newline, thus using 1,
+    # also -1 because we have a literal in the message, not a list index :D
     await reply_and_delete(message, text)
 
 
