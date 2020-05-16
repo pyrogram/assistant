@@ -22,12 +22,14 @@
 
 import asyncio
 import time
-from functools import partial
+from functools import partial, wraps
 
 import aiohttp
+from pyrogram import (CallbackQuery, ChatPermissions, Emoji, Filters,
+                      InlineKeyboardButton, InlineKeyboardMarkup, Message)
+
 from ..assistant import Assistant
-from pyrogram import Filters, Message, Emoji, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, ChatPermissions
-from functools import wraps
+from ..utils import docs
 
 command = partial(Filters.command, prefixes="#")
 
@@ -214,23 +216,8 @@ async def learn(_, message: Message):
 ################################
 
 
-RULES = """
-**Pyrogram Rules**
-
-` 1.` English only. Other groups: #groups.
-` 2.` Spam, flood and hate speech is forbidden.
-` 3.` Talks unrelated to Pyrogram are not allowed.
-` 4.` Keep unrelated media/emojis to a minimum.
-` 5.` Be nice, respect people and use common sense.
-` 6.` Ask before sending PMs and respect answers.
-` 7.` "Doesn't work" means nothing. Explain in details.
-` 8.` Ask if you encounter errors, not if code is correct.
-` 9.` Make use of nekobin.com for sharing long code.
-`10.` No photos unless they are meaningful and small.
-
-Rules are subject to change without notice.
-"""
-
+RULES = docs.rules
+# One place for all rules, the docs.
 
 @Assistant.on_message(command("rules"))
 async def rules(_, message: Message):
@@ -243,6 +230,21 @@ async def rules(_, message: Message):
     except Exception:
         text = RULES
 
+    await reply_and_delete(message, text)
+
+
+@Assistant.on_message(
+    Filters.via_bot
+    & Filters.regex(r"^Pyrogram Rules\n")
+    & ~Filters.regex(r"^Pyrogram Rules[\s\S]+notice\.$")
+)  # I know this is ugly, but this way we don't filter the full ruleset lol
+async def repost_rules(_, message: Message):
+    index = int(message.text[17])
+    if index == 0:
+        index = 10
+    split = RULES.split("\n")
+    text = f"{split[0]}\n\n{split[3:-3][index-1]}"
+    # -1 because we have a literal in the message, not a list index :D
     await reply_and_delete(message, text)
 
 
@@ -456,7 +458,7 @@ HELP = f"""
     f"• #{fn[0]}{'`*`' if hasattr(fn[1], 'admin') else ''} - {fn[1].__doc__}"
     for fn in locals().items()
     if hasattr(fn[1], "handler")
-    and fn[0] not in ["unban"])}
+    and fn[0] not in ["unban", "repost_rules"])}
 
 `*` Administrators only
 """
