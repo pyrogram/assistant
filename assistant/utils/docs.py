@@ -362,6 +362,7 @@ DEFAULT_RESULTS = [
 rules = """
 **Pyrogram Rules**
 
+` 0.` Follow rules to improve chances of getting answers.
 ` 1.` English only. Other groups: #groups.
 ` 2.` Spam, flood and hate speech is forbidden.
 ` 3.` Talks unrelated to Pyrogram are not allowed.
@@ -383,5 +384,5 @@ RULES = [
         input_message_content=InputTextMessageContent("**Pyrogram Rules**\n\n" + rule),
         thumb_url=SCROLL_THUMB,
     )
-    for i, rule in enumerate(rules.split("\n")[3:-3], 1)
+    for i, rule in enumerate(rules.split("\n")[3:-3])
 ]

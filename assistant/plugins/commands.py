@@ -241,8 +241,6 @@ async def rules(_, message: Message):
 )  # I know this is ugly, but this way we don't filter the full ruleset lol
 async def repost_rules(_, message: Message):
     index = int(message.text[17])
-    if index == 0:
-        index = 10
     split = RULES.split("\n")
     text = f"{split[1]}\n\n{split[3:-3][index - 1]}"
     # First split index is a newline, thus using 1,
