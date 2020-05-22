@@ -216,8 +216,9 @@ async def learn(_, message: Message):
 ################################
 
 
-RULES = docs.rules
 # One place for all rules, the docs.
+RULES = docs.rules
+
 
 @Assistant.on_message(command("rules"))
 async def rules(_, message: Message):
@@ -243,7 +244,7 @@ async def repost_rules(_, message: Message):
     if index == 0:
         index = 10
     split = RULES.split("\n")
-    text = f"{split[1]}\n\n{split[3:-3][index-1]}"
+    text = f"{split[1]}\n\n{split[3:-3][index - 1]}"
     # First split index is a newline, thus using 1,
     # also -1 because we have a literal in the message, not a list index :D
     await reply_and_delete(message, text)
@@ -306,14 +307,25 @@ async def rtd(_, message: Message):
 ################################
 
 
-RTFD = "Go read the fscking docs: https://docs.pyrogram.org"
+RTFD = "You seem to be lost...\n\nGo read the **fscking docs**: https://docs.pyrogram.org"
 
 
 @Assistant.on_message(command("rtfd"))
 @admins_only
 async def rtfd(_, message: Message):
     """Tell to RTFD (rude)"""
-    await reply_and_delete(message, RTFD)
+    await asyncio.gather(
+        message.delete(),
+        message.reply_photo(
+            "https://i.imgur.com/a08Ju2e.png",
+            quote=False,
+            caption=RTFD,
+            reply_to_message_id=getattr(
+                message.reply_to_message,
+                "message_id", None
+            )
+        )
+    )
 
 
 ################################
