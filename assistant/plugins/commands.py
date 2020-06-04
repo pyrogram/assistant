@@ -223,11 +223,12 @@ RULES = docs.rules
 @Assistant.on_message(command("rules"))
 async def rules(_, message: Message):
     """Show Pyrogram rules"""
+    # Still ugly. Patching Colin's code.
     # noinspection PyBroadException
     try:
         index = int(message.command[1])
         split = RULES.strip().split("\n")
-        text = f"{split[0]}\n\n{split[index + 1]}"
+        text = f"{split[0]}\n\n{split[index + 2]}"
     except Exception:
         text = RULES
 
@@ -240,9 +241,10 @@ async def rules(_, message: Message):
     & ~Filters.regex(r"^Pyrogram Rules[\s\S]+notice\.$")
 )  # I know this is ugly, but this way we don't filter the full ruleset lol
 async def repost_rules(_, message: Message):
-    index = int(message.text[17])
+    code = message.entities[-1]
+    index = int(message.text[code.offset:code.offset + code.length][:-1])
     split = RULES.split("\n")
-    text = f"{split[1]}\n\n{split[3:-3][index - 1]}"
+    text = f"{split[1]}\n\n{split[3:-3][index]}"
     # First split index is a newline, thus using 1,
     # also -1 because we have a literal in the message, not a list index :D
     await reply_and_delete(message, text)
