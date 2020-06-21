@@ -346,7 +346,7 @@ async def formatting(_, message: Message):
         message.reply(
             FORMATTING,
             quote=False,
-            parse_mode="html"
+            parse_mode="html",
             disable_web_page_preview=True,
             reply_to_message_id=getattr(
                 message.reply_to_message,
