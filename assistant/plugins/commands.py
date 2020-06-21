@@ -331,6 +331,34 @@ async def rtfd(_, message: Message):
 ################################
 
 
+FORMATTING = (
+    "Please format your code with triple backticks to make it more readable.\n"
+    "<code>```your code here```</code>"
+)
+
+
+@Assistant.on_message(command("fmt"))
+@admins_only
+async def formatting(_, message: Message):
+    """Tell to format"""
+    await asyncio.gather(
+        message.delete(),
+        message.reply(
+            FORMATTING,
+            quote=False,
+            parse_mode="html"
+            disable_web_page_preview=True,
+            reply_to_message_id=getattr(
+                message.reply_to_message,
+                "message_id", None
+            ),
+        )
+    )
+
+
+################################
+
+
 DEV = (
     "The fix for this issue has already been pushed to the `develop` branch on "
     "[GitHub](https://github.com/pyrogram/pyrogram). You can now upgrade Pyrogram with:\n\n"
