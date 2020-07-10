@@ -490,8 +490,8 @@ async def ban(bot: Assistant, message: Message):
 
 ################################
 
-LOCKED = f"Chat has been locked {Emoji.LOCKED}. Send #unlock to unlock."
-UNLOCKED = f"Chat has been unlocked {Emoji.UNLOCKED}"
+LOCKED = f"{Emoji.LOCKED} Chat has been locked. Send #unlock to unlock."
+UNLOCKED = f"{Emoji.UNLOCKED} Chat has been unlocked."
 
 PERMISSIONS = {-1001387666944: ChatPermissions(can_send_messages=True, can_send_media_messages=True)}  # Inn
 PERMISSIONS.update(
