@@ -490,6 +490,41 @@ async def ban(bot: Assistant, message: Message):
 
 ################################
 
+LOCKED = f"{Emoji.LOCKED} Chat has been locked. Send #unlock to unlock."
+UNLOCKED = f"{Emoji.UNLOCKED} Chat has been unlocked."
+
+PERMISSIONS = {-1001387666944: ChatPermissions(can_send_messages=True, can_send_media_messages=True)}  # Inn
+PERMISSIONS.update(
+    dict.fromkeys(  # Using this to remove redundant code
+        [-1001221450384, -1001355792138],  # Lounge and Italian Group
+        ChatPermissions(
+            can_send_messages=True,
+            can_send_media_messages=True,
+            can_send_stickers=True,
+            can_send_animations=True,
+            can_send_games=True,
+            can_use_inline_bots=True,
+        )
+    )
+)
+
+@Assistant.on_message(command("lock"))
+@admins_only
+async def lock_chat(bot: Assistant, message: Message):
+    """Lock the Chat"""
+    await bot.set_chat_permissions(message.chat.id, ChatPermissions(can_send_messages=False))
+    await reply_and_delete(message, LOCKED)
+
+@Assistant.on_message(command("unlock"))
+@admins_only
+async def unlock_chat(bot: Assistant, message: Message):
+    """Unlock the Chat"""
+    await bot.set_chat_permissions(message.chat.id, PERMISSIONS[message.chat.id])
+    await reply_and_delete(message, UNLOCKED)
+
+
+################################
+
 nl = "\n"
 
 HELP = f"""
