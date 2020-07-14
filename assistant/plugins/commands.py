@@ -510,14 +510,14 @@ PERMISSIONS.update(
 
 @Assistant.on_message(command("lock"))
 @admins_only
-async def lock_chat(bot: Assistant, message: Message):
+async def lock(bot: Assistant, message: Message):
     """Lock the Chat"""
     await bot.set_chat_permissions(message.chat.id, ChatPermissions(can_send_messages=False))
     await reply_and_delete(message, LOCKED)
 
 @Assistant.on_message(command("unlock"))
 @admins_only
-async def unlock_chat(bot: Assistant, message: Message):
+async def unlock(bot: Assistant, message: Message):
     """Unlock the Chat"""
     await bot.set_chat_permissions(message.chat.id, PERMISSIONS[message.chat.id])
     await reply_and_delete(message, UNLOCKED)
