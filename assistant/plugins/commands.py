@@ -508,6 +508,7 @@ PERMISSIONS.update(
     )
 )
 
+
 @Assistant.on_message(command("lock"))
 @admins_only
 async def lock(bot: Assistant, message: Message):
@@ -515,12 +516,27 @@ async def lock(bot: Assistant, message: Message):
     await bot.set_chat_permissions(message.chat.id, ChatPermissions(can_send_messages=False))
     await reply_and_delete(message, LOCKED)
 
+
 @Assistant.on_message(command("unlock"))
 @admins_only
 async def unlock(bot: Assistant, message: Message):
     """Unlock the Chat"""
     await bot.set_chat_permissions(message.chat.id, PERMISSIONS[message.chat.id])
     await reply_and_delete(message, UNLOCKED)
+
+
+EVIL = (
+    "Pyrogram is free, open-source and community driven software; "
+    "this means you are completely free to use it for any purpose whatsoever. "
+    "However, help and support is a privilege and nobody is obligated to assist you, "
+    "especially if you want to misbehave or harm Telegram with evil actions."
+)
+
+
+@Assistant.on_message(command("evil"))
+async def evil(_, message: Message):
+    """No help for evil actions"""
+    await reply_and_delete(message, EVIL)
 
 
 ################################
