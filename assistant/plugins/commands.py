@@ -543,7 +543,14 @@ async def cb_query(bot: Assistant, query: CallbackQuery):
         await query.edit_message_text(f"~~{text.markdown}~~\n\nPardoned")
 
     if action == "remove":
-        if query.from_user.id != user_id and not bot.is_admin(query.message):
+        # Dummy Message object to check if the user is admin.
+        # Re: https://t.me/pyrogramlounge/324583
+        dummy = Message(
+            message_id=0,
+            from_user=query.from_user,
+            chat=query.message.chat
+        )
+        if query.from_user.id != user_id and not bot.is_admin(dummy):
             await query.answer("Only Admins can remove the help messages.")
 
         await query.message.delete()
