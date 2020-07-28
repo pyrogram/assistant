@@ -429,38 +429,6 @@ async def delete(bot: Assistant, message: Message):
 
 ################################
 
-@Assistant.on_callback_query()
-async def unban(bot: Assistant, query: CallbackQuery):
-    action, user_id = query.data.split(".")
-    user_id = int(user_id)
-    text = query.message.text
-
-    if action == "unban":
-        if query.from_user.id != Assistant.CREATOR_ID:
-            await query.answer("Only Dan can pardon banned users", show_alert=True)
-            return
-
-        await bot.restrict_chat_member(
-            query.message.chat.id,
-            user_id,
-            ChatPermissions(
-                can_send_messages=True,
-                can_send_media_messages=True,
-                can_send_stickers=True,
-                can_send_animations=True,
-                can_send_games=True,
-                can_use_inline_bots=True,
-                can_add_web_page_previews=True,
-                can_send_polls=True,
-                can_change_info=True,
-                can_invite_users=True,
-                can_pin_messages=True
-            )
-        )
-
-        await query.edit_message_text(f"~~{text.markdown}~~\n\nPardoned")
-
-
 @Assistant.on_message(command("ban"))
 @admins_only
 async def ban(bot: Assistant, message: Message):
@@ -525,6 +493,8 @@ async def unlock(bot: Assistant, message: Message):
     await reply_and_delete(message, UNLOCKED)
 
 
+################################
+
 EVIL = (
     "Pyrogram is free, open-source and community driven software; "
     "this means you are completely free to use it for any purpose whatsoever. "
@@ -541,6 +511,46 @@ async def evil(_, message: Message):
 
 ################################
 
+@Assistant.on_callback_query()
+async def cb_query(bot: Assistant, query: CallbackQuery):
+    action, user_id = query.data.split(".")
+    user_id = int(user_id)
+    text = query.message.text
+
+    if action == "unban":
+        if query.from_user.id != Assistant.CREATOR_ID:
+            await query.answer("Only Dan can pardon banned users", show_alert=True)
+            return
+
+        await bot.restrict_chat_member(
+            query.message.chat.id,
+            user_id,
+            ChatPermissions(
+                can_send_messages=True,
+                can_send_media_messages=True,
+                can_send_stickers=True,
+                can_send_animations=True,
+                can_send_games=True,
+                can_use_inline_bots=True,
+                can_add_web_page_previews=True,
+                can_send_polls=True,
+                can_change_info=True,
+                can_invite_users=True,
+                can_pin_messages=True
+            )
+        )
+
+        await query.edit_message_text(f"~~{text.markdown}~~\n\nPardoned")
+
+    if action == "remove":
+        if query.from_user.id != user_id and not bot.is_admin(query.message):
+            await query.answer("Only Admins can remove the help messages.")
+
+        await query.message.delete()
+
+
+################################
+
 nl = "\n"
 
 HELP = f"""
@@ -550,7 +560,7 @@ HELP = f"""
     f"• #{fn[0]}{'`*`' if hasattr(fn[1], 'admin') else ''} - {fn[1].__doc__}"
     for fn in locals().items()
     if hasattr(fn[1], "handler")
-    and fn[0] not in ["unban", "repost_rules"])}
+    and fn[0] not in ["cb_query", "repost_rules"])}
 
 `*` Administrators only
 """
@@ -558,6 +568,19 @@ HELP = f"""
 
 # noinspection PyShadowingBuiltins
 @Assistant.on_message(command("help"))
-async def help(_, message: Message):
+async def help(bot: Assistant, message: Message):
     """Show this message"""
-    await reply_and_delete(message, HELP)
+    await asyncio.gather(
+        message.delete(),
+        message.reply(
+            HELP,
+            quote=False,
+            reply_to_message_id=getattr(
+                message.reply_to_message,
+                "message_id", None
+            ),
+            reply_markup=InlineKeyboardMarkup([[
+                InlineKeyboardButton("Remove Help", f"remove.{message.from_user.id}")
+            ]]),
+        )
+    )
