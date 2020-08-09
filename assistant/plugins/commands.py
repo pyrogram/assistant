@@ -511,10 +511,12 @@ async def evil(_, message: Message):
 
 ################################
 
-@Assistant.on_callback_query()
+# Pattern: https://regex101.com/r/6xdeRf/3
+@Assistant.on_callback_query(Filters.regex(r"^(?P<action>remove|unban)\.(?P<uid>\d+)"))
 async def cb_query(bot: Assistant, query: CallbackQuery):
-    action, user_id = query.data.split(".")
-    user_id = int(user_id)
+    match = query.matches[0]
+    action = match.group("action")
+    user_id = int(match.group("uid"))
     text = query.message.text
 
     if action == "unban":
@@ -550,10 +552,11 @@ async def cb_query(bot: Assistant, query: CallbackQuery):
             from_user=query.from_user,
             chat=query.message.chat
         )
-        if query.from_user.id != user_id and not bot.is_admin(dummy):
+        if query.from_user.id == user_id or bot.is_admin(dummy):
+            await query.answer()
+            await query.message.delete()
+        else:
             await query.answer("Only Admins can remove the help messages.")
-
-        await query.message.delete()
 
 
 ################################
