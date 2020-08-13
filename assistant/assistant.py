@@ -44,7 +44,8 @@ class Assistant(Client):
             plugins=dict(
                 root=f"{name}.plugins",
                 exclude=["welcome"]
-            )
+            ),
+            sleep_threshold=180
         )
 
         self.admins = {
