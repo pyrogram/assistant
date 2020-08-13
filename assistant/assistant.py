@@ -20,6 +20,9 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #  SOFTWARE.
 
+import time
+from datetime import datetime
+
 from pyrogram import Client, Message
 from pyrogram import __version__
 from pyrogram.api.all import layer
@@ -38,14 +41,19 @@ class Assistant(Client):
             name,
             config_file=f"{name}.ini",
             workers=16,
-            plugins=dict(root=f"{name}/plugins"),
-            workdir="."
+            plugins=dict(
+                root=f"{name}.plugins",
+                exclude=["welcome"]
+            )
         )
 
         self.admins = {
             chat: {Assistant.CREATOR_ID}
             for chat in Assistant.CHATS
         }
+
+        self.uptime_reference = time.monotonic_ns()
+        self.start_datetime = datetime.utcnow()
 
     async def start(self):
         await super().start()

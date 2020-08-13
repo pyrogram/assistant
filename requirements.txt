@@ -1,3 +1,4 @@
 https://github.com/pyrogram/pyrogram/archive/asyncio-dev.zip
 tgcrypto
 aiohttp
+num2words

@@ -25,6 +25,7 @@ import time
 from functools import partial, wraps
 
 import aiohttp
+from num2words import num2words
 from pyrogram import (CallbackQuery, ChatPermissions, Emoji, Filters,
                       InlineKeyboardButton, InlineKeyboardMarkup, Message)
 
@@ -82,7 +83,7 @@ async def ping(_, message: Message):
 SCHEMA = "https"
 BASE = "nekobin.com"
 ENDPOINT = f"{SCHEMA}://{BASE}/api/documents"
-ANSWER = "**Long message from** {:mention}\n{}"
+ANSWER = "**Long message from** {}\n{}"
 TIMEOUT = 3
 MESSAGE_ID_DIFF = 100
 
@@ -108,7 +109,7 @@ async def neko(_, message: Message):
         ) as response:
             key = (await response.json())["result"]["key"]
 
-    await reply_and_delete(reply, ANSWER.format(reply.from_user, f"{BASE}/{key}.py"))
+    await reply_and_delete(reply, ANSWER.format(reply.from_user.mention, f"{BASE}/{key}.py"))
 
 
 ################################
@@ -331,7 +332,7 @@ async def rtfd(_, message: Message):
 ################################
 
 
-FORMATTING = (
+FMT = (
     "Please format your code with triple backticks to make it more readable.\n"
     "<code>```your code here```</code>"
 )
@@ -339,12 +340,12 @@ FORMATTING = (
 
 @Assistant.on_message(command("fmt"))
 @admins_only
-async def formatting(_, message: Message):
-    """Tell to format"""
+async def fmt(_, message: Message):
+    """Tell to format code"""
     await asyncio.gather(
         message.delete(),
         message.reply(
-            FORMATTING,
+            FMT,
             quote=False,
             parse_mode="html",
             disable_web_page_preview=True,
@@ -448,7 +449,7 @@ async def ban(bot: Assistant, message: Message):
     await bot.restrict_chat_member(message.chat.id, reply.from_user.id, ChatPermissions())
 
     await message.reply(
-        f"__Banned {reply.from_user:mention} indefinitely__",
+        f"__Banned {reply.from_user.mention} indefinitely__",
         quote=False,
         reply_markup=InlineKeyboardMarkup([[
             InlineKeyboardButton("Give grace", f"unban.{reply.from_user.id}")
@@ -561,20 +562,48 @@ async def cb_query(bot: Assistant, query: CallbackQuery):
 
 ################################
 
-nl = "\n"
+@Assistant.on_message(command("up"))
+async def up(bot: Assistant, message: Message):
+    """Show Assistant's uptime"""
+    uptime = time.monotonic_ns() - bot.uptime_reference
 
-HELP = f"""
-**List of available commands**
+    us, ns = divmod(uptime, 1000)
+    ms, us = divmod(us, 1000)
+    s, ms = divmod(ms, 1000)
+    m, s = divmod(s, 60)
+    h, m = divmod(m, 60)
+    d, h = divmod(h, 24)
 
-{nl.join(
-    f"• #{fn[0]}{'`*`' if hasattr(fn[1], 'admin') else ''} - {fn[1].__doc__}"
-    for fn in locals().items()
-    if hasattr(fn[1], "handler")
-    and fn[0] not in ["cb_query", "repost_rules"])}
+    try:
+        arg = message.command[1]
+    except IndexError:
+        await reply_and_delete(message, f"**Uptime**: `{d}d {h}h {m}m {s}s`")
+    else:
+        if arg == "-v":
+            await reply_and_delete(
+                message,
+                f"**Uptime**: `{d}d {h}h {m}m {s}s {ms}ms {us}μs {ns}ns`\n"
+                f"**Since**: `{bot.start_datetime} UTC`"
+            )
+        elif arg == "-p":
+            await reply_and_delete(
+                message,
+                f"**Uptime**: "
+                f"`{num2words(d)} days, {num2words(h)} hours, {num2words(m)} minutes, "
+                f"{num2words(s)} seconds, {num2words(ms)} milliseconds, "
+                f"{num2words(us)} microseconds, {num2words(ns)} nanoseconds`\n"
+                f""
+                f"**Since**: `year {num2words(bot.start_datetime.year)}, "
+                f"month {bot.start_datetime.strftime('%B').lower()}, day {num2words(bot.start_datetime.day)}, "
+                f"hour {num2words(bot.start_datetime.hour)}, minute {num2words(bot.start_datetime.minute)}, "
+                f"second {num2words(bot.start_datetime.second)}, "
+                f"microsecond {num2words(bot.start_datetime.microsecond)}, Coordinated Universal Time`"
+            )
+        else:
+            await message.delete()
 
-`*` Administrators only
-"""
 
+################################
 
 # noinspection PyShadowingBuiltins
 @Assistant.on_message(command("help"))
@@ -594,3 +623,20 @@ async def help(bot: Assistant, message: Message):
             ]]),
         )
     )
+
+
+################################
+
+nl = "\n"
+
+HELP = f"""
+**List of available commands**
+
+{nl.join(
+    f"• #{fn[0]}{'`*`' if hasattr(fn[1], 'admin') else ''} - {fn[1].__doc__}"
+    for fn in locals().items()
+    if hasattr(fn[1], "handler")
+    and fn[0] not in ["cb_query", "repost_rules"])}
+
+`*` Administrators only
+"""
