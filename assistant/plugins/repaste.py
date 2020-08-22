@@ -31,7 +31,7 @@ TIMEOUT = 3
 
 CHAT = filters.chat("PyrogramChat")
 REGEX = filters.regex(
-    r"(https?://)?(www\.)?(?P<service>(p|h)astebin\.com|del\.dog|haste\.thevillage\.chat)/(raw/)?(?P<tag>\w+)"
+    r"(https?://)?(www\.)?(?P<service>(p|h)asteb(\.?in|in\.com)|del\.dog|haste.thevillage.chat)/(raw/)?(?P<tag>\w+)"
     # https://regex101.com/r/cl5iGU/3
 )
 FILTER = REGEX & CHAT & ~filters.edited
