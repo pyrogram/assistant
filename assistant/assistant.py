@@ -23,9 +23,10 @@
 import time
 from datetime import datetime
 
-from pyrogram import Client, Message
+from pyrogram import Client
 from pyrogram import __version__
-from pyrogram.api.all import layer
+from pyrogram.raw.all import layer
+from pyrogram.types import Message
 
 
 class Assistant(Client):

@@ -26,13 +26,13 @@ from functools import partial, wraps
 
 import aiohttp
 from num2words import num2words
-from pyrogram import (CallbackQuery, ChatPermissions, Emoji, Filters,
-                      InlineKeyboardButton, InlineKeyboardMarkup, Message)
+from pyrogram import filters, emoji
+from pyrogram.types import CallbackQuery, ChatPermissions, InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from ..assistant import Assistant
 from ..utils import docs
 
-command = partial(Filters.command, prefixes="#")
+command = partial(filters.command, prefixes="#")
 
 
 async def reply_and_delete(message: Message, text: str):
@@ -237,9 +237,9 @@ async def rules(_, message: Message):
 
 
 @Assistant.on_message(
-    Filters.via_bot
-    & Filters.regex(r"^Pyrogram Rules\n")
-    & ~Filters.regex(r"^Pyrogram Rules[\s\S]+notice\.$")
+    filters.via_bot
+    & filters.regex(r"^Pyrogram Rules\n")
+    & ~filters.regex(r"^Pyrogram Rules[\s\S]+notice\.$")
 )  # I know this is ugly, but this way we don't filter the full ruleset lol
 async def repost_rules(_, message: Message):
     code = message.entities[-1]
@@ -258,15 +258,15 @@ GROUPS = f"""
 **Pyrogram group chats**
 
 __Main groups__
-[{Emoji.GLOBE_WITH_MERIDIANS} International (English)](t.me/PyrogramChat)
-[{Emoji.SPEECH_BALLOON} Offtopic group](t.me/PyrogramLounge)
+[{emoji.GLOBE_WITH_MERIDIANS} International (English)](t.me/PyrogramChat)
+[{emoji.SPEECH_BALLOON} Offtopic group](t.me/PyrogramLounge)
 
 __Other groups__
-[{Emoji.ITALY} Italian](t.me/joinchat/AWDQ8lDPvwpWu3UH4Bx9Uw)
-[{Emoji.IRAN} Farsi](t.me/PyrogramIR)
-[{Emoji.BRAZIL} Portuguese](t.me/PyrogramBR)
-[{Emoji.INDONESIA} Indonesian](t.me/PyrogramID)
-[{Emoji.RUSSIA} Russian](t.me/RuPyrogram)
+[{emoji.FLAG_ITALY} Italian](t.me/joinchat/AWDQ8lDPvwpWu3UH4Bx9Uw)
+[{emoji.FLAG_IRAN} Farsi](t.me/PyrogramIR)
+[{emoji.FLAG_BRAZIL} Portuguese](t.me/PyrogramBR)
+[{emoji.FLAG_INDONESIA} Indonesian](t.me/PyrogramID)
+[{emoji.FLAG_RUSSIA} Russian](t.me/RuPyrogram)
 
 __If you want to host and maintain a group dedicated to your language, let us know!__
 """
@@ -459,8 +459,8 @@ async def ban(bot: Assistant, message: Message):
 
 ################################
 
-LOCKED = f"{Emoji.LOCKED} Chat has been locked. Send #unlock to unlock."
-UNLOCKED = f"{Emoji.UNLOCKED} Chat has been unlocked."
+LOCKED = f"{emoji.LOCKED} Chat has been locked. Send #unlock to unlock."
+UNLOCKED = f"{emoji.UNLOCKED} Chat has been unlocked."
 
 PERMISSIONS = {-1001387666944: ChatPermissions(can_send_messages=True, can_send_media_messages=True)}  # Inn
 PERMISSIONS.update(
@@ -513,7 +513,7 @@ async def evil(_, message: Message):
 ################################
 
 # Pattern: https://regex101.com/r/6xdeRf/3
-@Assistant.on_callback_query(Filters.regex(r"^(?P<action>remove|unban)\.(?P<uid>\d+)"))
+@Assistant.on_callback_query(filters.regex(r"^(?P<action>remove|unban)\.(?P<uid>\d+)"))
 async def cb_query(bot: Assistant, query: CallbackQuery):
     match = query.matches[0]
     action = match.group("action")

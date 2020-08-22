@@ -20,13 +20,14 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #  SOFTWARE.
 
-from pyrogram import Filters, Message, InlineKeyboardMarkup, InlineKeyboardButton, Emoji
+from pyrogram import filters, emoji
+from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 
 from ..assistant import Assistant
 from ..utils import docs
 
 
-@Assistant.on_message(Filters.private)
+@Assistant.on_message(filters.private)
 async def go(_, message: Message):
     await message.reply(
         docs.HELP,
@@ -34,11 +35,11 @@ async def go(_, message: Message):
         parse_mode="markdown",
         reply_markup=InlineKeyboardMarkup([[
             InlineKeyboardButton(
-                f"{Emoji.CARD_INDEX_DIVIDERS} Source Code",
+                f"{emoji.CARD_INDEX_DIVIDERS} Source Code",
                 url="https://github.com/pyrogram/assistant"
             ),
             InlineKeyboardButton(
-                f"{Emoji.FIRE} Go!",
+                f"{emoji.FIRE} Go!",
                 switch_inline_query=""
             )
         ]])
