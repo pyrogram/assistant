@@ -1,4 +1,4 @@
-https://github.com/pyrogram/pyrogram/archive/master.zip
+pyrogram==1.0.0b1
 tgcrypto
 aiohttp
 num2words
