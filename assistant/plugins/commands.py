@@ -267,6 +267,7 @@ __Other groups__
 [{emoji.FLAG_BRAZIL} Portuguese](t.me/PyrogramBR)
 [{emoji.FLAG_INDONESIA} Indonesian](t.me/PyrogramID)
 [{emoji.FLAG_RUSSIA} Russian](t.me/RuPyrogram)
+[{emoji.FLAG_ISRAEL} Hebrew](t.me/PyrogramHe)
 
 __If you want to host and maintain a group dedicated to your language, let us know!__
 """
