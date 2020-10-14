@@ -360,22 +360,6 @@ async def fmt(_, message: Message):
 
 ################################
 
-
-DEV = (
-    "The fix for this issue has already been pushed to the `develop` branch on "
-    "[GitHub](https://github.com/pyrogram/pyrogram). You can now upgrade Pyrogram with:\n\n"
-    "`pip3 install -U https://github.com/pyrogram/pyrogram/archive/develop.zip`"
-)
-
-
-@Assistant.on_message(command("dev"))
-async def dev(_, message: Message):
-    """Fixed in dev branch"""
-    await reply_and_delete(message, DEV)
-
-
-################################
-
 MESSAGE_DATE_DIFF = 43200  # 12h
 
 
@@ -474,6 +458,7 @@ PERMISSIONS.update(
             can_send_animations=True,
             can_send_games=True,
             can_use_inline_bots=True,
+            can_send_polls=True
         )
     )
 )
