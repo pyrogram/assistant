@@ -356,6 +356,22 @@ async def fmt(_, message: Message):
             ),
         )
     )
+    
+
+################################	
+
+
+DEV = (	
+    "The fix for this issue has already been pushed to the `develop` branch on "	
+    "[GitHub](https://github.com/pyrogram/pyrogram). You can now upgrade Pyrogram with:\n\n"	
+    "`pip3 install -U https://github.com/pyrogram/pyrogram/archive/develop.zip`"	
+)	
+
+
+@Assistant.on_message(command("dev"))	
+async def dev(_, message: Message):	
+    """Fixed in dev branch"""	
+    await reply_and_delete(message, DEV)	
 
 
 ################################
@@ -444,7 +460,8 @@ async def ban(bot: Assistant, message: Message):
 
 ################################
 
-LOCKED = f"{emoji.LOCKED} Chat has been locked. Send #unlock to unlock."
+LOCKED = f"{emoji.LOCKED} Chat has been locked. Send #
+to unlock."
 UNLOCKED = f"{emoji.UNLOCKED} Chat has been unlocked."
 
 PERMISSIONS = {-1001387666944: ChatPermissions(can_send_messages=True, can_send_media_messages=True)}  # Inn
