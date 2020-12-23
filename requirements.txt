@@ -1,4 +1,4 @@
-pyrogram>=1.0.0b0
+pyrogram
 tgcrypto
 aiohttp
 num2words
