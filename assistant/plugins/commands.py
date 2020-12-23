@@ -360,18 +360,17 @@ async def fmt(_, message: Message):
 
 ################################	
 
-
 DEV = (	
-    "The fix for this issue has already been pushed to the `develop` branch on "	
+    "The fix for this issue has already been pushed to the `master` branch on "	
     "[GitHub](https://github.com/pyrogram/pyrogram). You can now upgrade Pyrogram with:\n\n"	
-    "`pip3 install -U https://github.com/pyrogram/pyrogram/archive/develop.zip`"	
+    "`pip3 install -U pyrogram`"	
 )	
 
 
 @Assistant.on_message(command("dev"))	
-async def dev(_, message: Message):	
-    """Fixed in dev branch"""	
-    await reply_and_delete(message, DEV)	
+async def dev(_, message: Message):
+    """Fixed in dev branch"""
+    await reply_and_delete(message, DEV)
 
 
 ################################
