@@ -474,8 +474,8 @@ PERMISSIONS.update(
             can_send_animations=True,
             can_send_games=True,
             can_use_inline_bots=True,
+            can_add_web_page_previews=True,
             can_send_polls=True
-            can_add_web_page_previews=True
         )
     )
 )
