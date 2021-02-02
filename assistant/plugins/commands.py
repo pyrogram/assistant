@@ -362,9 +362,9 @@ async def fmt(_, message: Message):
 
 
 DEV = (
-    "The fix for this issue has already been pushed to the `develop` branch on "
+    "The fix for this issue has already been pushed to the `master` branch on "
     "[GitHub](https://github.com/pyrogram/pyrogram). You can now upgrade Pyrogram with:\n\n"
-    "`pip3 install -U https://github.com/pyrogram/pyrogram/archive/develop.zip`"
+    "`pip3 install -U https://github.com/pyrogram/pyrogram/archive/master.zip`"
 )
 
 
@@ -475,7 +475,7 @@ PERMISSIONS.update(
             can_send_games=True,
             can_use_inline_bots=True,
             can_add_web_page_previews=True,
-            can_send_polls=True,
+            can_send_polls=True
         )
     )
 )
