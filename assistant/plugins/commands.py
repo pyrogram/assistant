@@ -367,7 +367,7 @@ DEV = (
 )	
 
 
-@Assistant.on_message(command("dev"))	
+@Assistant.on_message(command("dev"))
 async def dev(_, message: Message):
     """Fixed in dev branch"""
     await reply_and_delete(message, DEV)
@@ -459,8 +459,7 @@ async def ban(bot: Assistant, message: Message):
 
 ################################
 
-LOCKED = f"{emoji.LOCKED} Chat has been locked. Send #
-to unlock."
+LOCKED = f"{emoji.LOCKED} Chat has been locked. Send #unlock to unlock."
 UNLOCKED = f"{emoji.UNLOCKED} Chat has been unlocked."
 
 PERMISSIONS = {-1001387666944: ChatPermissions(can_send_messages=True, can_send_media_messages=True)}  # Inn
