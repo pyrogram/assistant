@@ -460,6 +460,53 @@ async def ban(bot: Assistant, message: Message):
 
 ################################
 
+@Assistant.on_message(command("kick"))
+@admins_only
+async def kick(bot: Assistant, message: Message):
+    """Kick (they can rejoin)"""
+    reply = message.reply_to_message
+
+    if not reply:
+        return
+
+    # Don't kick admins
+    if bot.is_admin(reply):
+        m = await message.reply("Sorry, I don't kick administrators")
+        await asyncio.sleep(5)
+        await m.delete()
+        return
+
+    # Default ban until_time 60 seconds later as failsafe in case unban doesn't work
+    # (can happen in case the server processes unban before ban and thus ignoring unban)
+    await bot.kick_chat_member(message.chat.id, reply.from_user.id, int(time.time()) + 60)
+
+    await message.reply(
+        f"__Kicked {reply.from_user.mention}. They can rejoin__",
+        quote=False
+    )
+
+    await asyncio.sleep(5)  # Sleep to allow the server some time to process the kick
+    await bot.unban_chat_member(message.chat.id, reply.from_user.id)
+
+
+################################
+
+@Assistant.on_message(command("nab"))
+@admins_only
+async def nab(_: Assistant, message: Message):
+    reply = message.reply_to_message
+
+    if not reply:
+        return
+
+    await message.reply(
+        f"__Banned {reply.from_user.mention} indefinitely__",
+        quote=False
+    )
+
+
+################################
+
 LOCKED = f"{emoji.LOCKED} Chat has been locked. Send #unlock to unlock."
 UNLOCKED = f"{emoji.UNLOCKED} Chat has been unlocked."
 
@@ -639,7 +686,7 @@ HELP = f"""
     f"• #{fn[0]}{'`*`' if hasattr(fn[1], 'admin') else ''} - {fn[1].__doc__}"
     for fn in locals().items()
     if hasattr(fn[1], "handler")
-    and fn[0] not in ["cb_query", "repost_rules"])}
+    and fn[0] not in ["cb_query", "repost_rules", "nab"])}
 
 `*` Administrators only
 """
