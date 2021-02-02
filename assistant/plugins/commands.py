@@ -360,11 +360,11 @@ async def fmt(_, message: Message):
 
 ################################	
 
-DEV = (	
-    "The fix for this issue has already been pushed to the `master` branch on "	
-    "[GitHub](https://github.com/pyrogram/pyrogram). You can now upgrade Pyrogram with:\n\n"	
-    "`pip3 install -U https://github.com/pyrogram/pyrogram/archive/master.zip`"	
-)	
+DEV = (
+    "The fix for this issue has already been pushed to the `master` branch on "
+    "[GitHub](https://github.com/pyrogram/pyrogram). You can now upgrade Pyrogram with:\n\n"
+    "`pip3 install -U https://github.com/pyrogram/pyrogram/archive/master.zip`"
+)
 
 
 @Assistant.on_message(command("dev"))
