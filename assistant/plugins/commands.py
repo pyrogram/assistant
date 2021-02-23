@@ -32,7 +32,7 @@ from pyrogram.types import CallbackQuery, ChatPermissions, InlineKeyboardButton,
 from ..assistant import Assistant
 from ..utils import docs
 
-command = partial(filters.command, prefixes="#")
+command = partial(filters.command, prefixes=list("#!"))
 
 
 async def reply_and_delete(message: Message, text: str):
