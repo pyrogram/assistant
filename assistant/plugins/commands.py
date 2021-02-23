@@ -493,14 +493,19 @@ async def kick(bot: Assistant, message: Message):
 
 @Assistant.on_message(command("nab"))
 @admins_only
-async def nab(_: Assistant, message: Message):
+async def nab(bot: Assistant, message: Message):
     reply = message.reply_to_message
 
     if not reply:
         return
 
+    target = reply.from_user
+
+    if target.id in [bot.CREATOR_ID, bot.ASSISTANT_ID]:
+        target = message.from_user
+
     await message.reply(
-        f"__Banned {reply.from_user.mention} indefinitely__",
+        f"__Banned {target.mention} indefinitely__",
         quote=False
     )
 
