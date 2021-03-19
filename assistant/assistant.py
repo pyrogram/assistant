@@ -22,8 +22,8 @@
 
 import time
 from datetime import datetime
-
-from pyrogram import Client
+from configparser import ConfigParser
+from pyrogram import Client, Message
 from pyrogram import __version__
 from pyrogram.raw.all import layer
 from pyrogram.types import Message
@@ -32,13 +32,14 @@ from pyrogram.types import Message
 class Assistant(Client):
     CREATOR_ID = 23122162  # Dan (haskell)
     ASSISTANT_ID = 483849041
-
-    CHATS = [-1001387666944,  # Inn (pyrogramchat)
-             -1001221450384,  # Lounge (pyrogramlounge)
-             -1001355792138]  # Pyrogram Italia
+    config = ConfigParser()
+    chats = []
 
     def __init__(self):
         name = self.__class__.__name__.lower()
+
+        self.config.read(f"{name}.ini")
+        Assistant.chats = [int(c) for c in self.config[name]["chats"].split()]
 
         super().__init__(
             name,
@@ -53,7 +54,7 @@ class Assistant(Client):
 
         self.admins = {
             chat: {Assistant.CREATOR_ID}
-            for chat in Assistant.CHATS
+            for chat in Assistant.chats
         }
 
         self.uptime_reference = time.monotonic_ns()
