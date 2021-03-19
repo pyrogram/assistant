@@ -22,13 +22,12 @@
 
 import re
 
-from pyrogram import (
-    Emoji, InlineQueryResultArticle, InputTextMessageContent, InlineKeyboardMarkup, InlineKeyboardButton, Filters
-)
-from pyrogram import Object
-from pyrogram.api import types as raw_types, functions as raw_methods
-from pyrogram.api.all import layer
-from pyrogram.client import types, Client
+from pyrogram import filters, emoji, types
+from pyrogram.types import (InlineQueryResultArticle, InputTextMessageContent, InlineKeyboardMarkup,
+                            InlineKeyboardButton, Object)
+from pyrogram.raw import types as raw_types, functions as raw_methods
+from pyrogram.raw.all import layer
+from pyrogram import Client
 
 
 class Result:
@@ -60,7 +59,7 @@ class Result:
                 title=f"{item.__name__}",
                 description="Method - " + short,
                 input_message_content=InputTextMessageContent(
-                    f"{Emoji.CLOSED_BOOK} **Pyrogram Docs**\n\n"
+                    f"{emoji.CLOSED_BOOK} **Pyrogram Docs**\n\n"
                     f"[{item.__name__}]({cls.DOCS.format(item.__name__)}) - Method\n\n"
                     f"`{full}`\n",
                     disable_web_page_preview=True,
@@ -79,7 +78,7 @@ class Result:
                 title=f"{item.__name__}",
                 description="Decorator - " + short,
                 input_message_content=InputTextMessageContent(
-                    f"{Emoji.ARTIST_PALETTE} **Pyrogram Docs**\n\n"
+                    f"{emoji.ARTIST_PALETTE} **Pyrogram Docs**\n\n"
                     f"[{item.__name__}]({cls.DOCS.format(item.__name__)}) - Decorator\n\n"
                     f"`{full}`\n",
                     disable_web_page_preview=True,
@@ -98,7 +97,7 @@ class Result:
                 title=f"{item.__name__}",
                 description="Type - " + short,
                 input_message_content=InputTextMessageContent(
-                    f"{Emoji.GREEN_BOOK} **Pyrogram Docs**\n\n"
+                    f"{emoji.GREEN_BOOK} **Pyrogram Docs**\n\n"
                     f"[{item.__name__}]({cls.DOCS.format(item.__name__)}) - Type\n\n"
                     f"`{full}`",
                     disable_web_page_preview=True,
@@ -107,7 +106,7 @@ class Result:
             )
 
     class Filter:
-        DOCS = "https://docs.pyrogram.org/api/filters#pyrogram.Filters.{}"
+        DOCS = "https://docs.pyrogram.org/api/filters#pyrogram.filters.{}"
         THUMB = "https://i.imgur.com/YRe6cKU.png"
 
         def __new__(cls, item):
@@ -115,7 +114,7 @@ class Result:
                 title=f"{item.__class__.__name__}",
                 description=f"Filter - {item.__class__.__name__}",
                 input_message_content=InputTextMessageContent(
-                    f"{Emoji.CONTROL_KNOBS} **Pyrogram Docs**\n\n"
+                    f"{emoji.CONTROL_KNOBS} **Pyrogram Docs**\n\n"
                     f"[{item.__class__.__name__}]({cls.DOCS.format(item.__class__.__name__.lower())}) - Filter",
                     disable_web_page_preview=True,
                 ),
@@ -133,7 +132,7 @@ class Result:
                 title=f"{item.__qualname__}",
                 description=f'Bound Method "{b}" of {a}',
                 input_message_content=InputTextMessageContent(
-                    f"{Emoji.LEDGER} **Pyrogram Docs**\n\n"
+                    f"{emoji.LEDGER} **Pyrogram Docs**\n\n"
                     f"[{item.__qualname__}]({cls.DOCS.format(a, b)}) - Bound Method",
                     disable_web_page_preview=True,
                 ),
@@ -152,7 +151,7 @@ class Result:
                 title=f"{item[0]}",
                 description=f"Raw Method - {constructor_id}\nSchema: Layer {layer}",
                 input_message_content=InputTextMessageContent(
-                    f"{Emoji.BLUE_BOOK} **Pyrogram Docs**\n\n"
+                    f"{emoji.BLUE_BOOK} **Pyrogram Docs**\n\n"
                     f"[{item[0]}]({path}) - Raw Method\n\n"
                     f"`ID`: **{constructor_id}**\n"
                     f"`Schema`: **Layer {layer}**",
@@ -173,7 +172,7 @@ class Result:
                 title=f"{item[0]}",
                 description=f"Raw Type - {constructor_id}\nSchema: Layer {layer}",
                 input_message_content=InputTextMessageContent(
-                    f"{Emoji.ORANGE_BOOK} **Pyrogram Docs**\n\n"
+                    f"{emoji.ORANGE_BOOK} **Pyrogram Docs**\n\n"
                     f"[{item[0]}]({path}) - Raw Type\n\n"
                     f"`ID`: **{constructor_id}**\n"
                     f"`Schema`: **Layer {layer}**",
@@ -214,11 +213,11 @@ for a in dir(types):
         TYPES.append((a, Result.Type(t)))
 
 FILTERS = [
-    (i.lower(), Result.Filter(getattr(Filters, i)))
+    (i.lower(), Result.Filter(getattr(filters, i)))
     for i in filter(
         lambda x: not x.startswith("_")
                   and x[0].islower(),
-        dir(Filters)
+        dir(filters)
     )
 ]
 
@@ -274,9 +273,10 @@ ROCKET_THUMB = "https://i.imgur.com/PDaYHd8.png"
 ABOUT_BOT_THUMB = "https://i.imgur.com/zRglRz3.png"
 OPEN_BOOK_THUMB = "https://i.imgur.com/v1XSJ1D.png"
 RED_HEART_THUMB = "https://i.imgur.com/66FVFXz.png"
+SCROLL_THUMB = "https://i.imgur.com/L1u0VlX.png"
 
 HELP = (
-    f"{Emoji.ROBOT_FACE} **Pyrogram Assistant**\n\n"
+    f"{emoji.ROBOT} **Pyrogram Assistant**\n\n"
     f"You can use this bot in inline mode to search for Pyrogram methods, types and other resources from "
     f"https://docs.pyrogram.org.\n\n"
 
@@ -298,7 +298,7 @@ DEFAULT_RESULTS = [
     InlineQueryResultArticle(
         title="About Pyrogram",
         input_message_content=InputTextMessageContent(
-            f"{Emoji.FIRE} **Pyrogram**\n\n"
+            f"{emoji.FIRE} **Pyrogram**\n\n"
             f"Pyrogram is an elegant, easy-to-use Telegram client library and framework written from the ground up in "
             f"Python and C. It enables you to easily create custom apps using both user and bot identities (bot API "
             f"alternative) via the MTProto API.",
@@ -307,11 +307,11 @@ DEFAULT_RESULTS = [
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton(f"{Emoji.BUSTS_IN_SILHOUETTE} Community", url="https://t.me/pyrogram")
+                    InlineKeyboardButton(f"{emoji.BUSTS_IN_SILHOUETTE} Community", url="https://t.me/pyrogram")
                 ],
                 [
-                    InlineKeyboardButton(f"{Emoji.CARD_INDEX_DIVIDERS} GitHub", url="https://github.com/pyrogram"),
-                    InlineKeyboardButton(f"{Emoji.OPEN_BOOK} Docs", url="https://docs.pyrogram.org")
+                    InlineKeyboardButton(f"{emoji.CARD_INDEX_DIVIDERS} GitHub", url="https://github.com/pyrogram"),
+                    InlineKeyboardButton(f"{emoji.OPEN_BOOK} Docs", url="https://docs.pyrogram.org")
                 ]
             ]
         ),
@@ -323,11 +323,11 @@ DEFAULT_RESULTS = [
         input_message_content=InputTextMessageContent(HELP, disable_web_page_preview=True, parse_mode="markdown"),
         reply_markup=InlineKeyboardMarkup([[
             InlineKeyboardButton(
-                f"{Emoji.CARD_INDEX_DIVIDERS} Source Code",
+                f"{emoji.CARD_INDEX_DIVIDERS} Source Code",
                 url="https://github.com/pyrogram/assistant"
             ),
             InlineKeyboardButton(
-                f"{Emoji.FIRE} Go!",
+                f"{emoji.FIRE} Go!",
                 switch_inline_query=""
             )
         ]]),
@@ -337,7 +337,7 @@ DEFAULT_RESULTS = [
     InlineQueryResultArticle(
         title="Quick Start",
         input_message_content=InputTextMessageContent(
-            f"{Emoji.ROCKET} **Pyrogram Docs**\n\n"
+            f"{emoji.ROCKET} **Pyrogram Docs**\n\n"
             f"[Quick Start](https://docs.pyrogram.org/intro/quickstart) - Introduction\n\n"
             f"`Quick overview to get you started as fast as possible`",
             disable_web_page_preview=True,
@@ -348,7 +348,7 @@ DEFAULT_RESULTS = [
     InlineQueryResultArticle(
         title="Support",
         input_message_content=InputTextMessageContent(
-            f"{Emoji.RED_HEART} **Support Pyrogram**\n\n"
+            f"{emoji.RED_HEART} **Support Pyrogram**\n\n"
             f"[Support](https://docs.pyrogram.org/support-pyrogram) - Meta\n\n"
             f"`Ways to show your appreciation.`",
             disable_web_page_preview=True,
@@ -356,4 +356,32 @@ DEFAULT_RESULTS = [
         description="Ways to show your appreciation.",
         thumb_url=RED_HEART_THUMB,
     ),
+]
+
+rules = """
+**Pyrogram Rules**
+
+` 0.` Follow rules; improve chances of getting answers.
+` 1.` English only. Other groups by language: #groups.
+` 2.` Spam, flood and hate speech is strictly forbidden.
+` 3.` Talks unrelated to Pyrogram (ot) are not allowed.
+` 4.` Keep unrelated media and emojis to a minimum.
+` 5.` Be nice, respect people and use common sense.
+` 6.` Ask before sending PMs and respect the answers.
+` 7.` "Doesn't work" means nothing. Explain in details.
+` 8.` Ask if you get any error, not if the code is correct.
+` 9.` Make use of nekobin.com for sharing long code.
+`10.` No photos unless they are meaningful and small.
+
+__Rules are subject to change without notice.__
+"""
+
+RULES = [
+    InlineQueryResultArticle(
+        title=f"Rule {i}",
+        description=re.sub(r"` ?\d+.` ", "", rule),
+        input_message_content=InputTextMessageContent("**Pyrogram Rules**\n\n" + rule),
+        thumb_url=SCROLL_THUMB,
+    )
+    for i, rule in enumerate(rules.split("\n")[3:-3])
 ]

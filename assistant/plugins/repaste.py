@@ -20,22 +20,21 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #  SOFTWARE.
 
-import asyncio
-
 import aiohttp
-from pyrogram import Client, Filters, Message
+from pyrogram import Client, filters
+from pyrogram.types import Message
 
 NEKO = "> nekobin.com/{}.py"
 ENDPOINT = "https://nekobin.com/api/documents"
 ANSWER = "**Please use Nekobin for pastes.**\n"
 TIMEOUT = 3
 
-CHAT = Filters.chat("PyrogramChat")
-REGEX = Filters.regex(
-    r"(https?://)?(www\.)?(?P<service>(p|h)astebin\.com|del\.dog)/(raw/)?(?P<tag>\w+)"
-    # https://regex101.com/r/cl5iGU/2
+CHAT = filters.chat("PyrogramChat")
+REGEX = filters.regex(
+    r"(https?://)?(www\.)?(?P<service>(p|h)asteb(\.?in|in\.com)|del\.dog|haste.thevillage.chat)/(raw/)?(?P<tag>\w+)"
+    # https://regex101.com/r/cl5iGU/3
 )
-FILTER = REGEX & CHAT & ~Filters.edited
+FILTER = REGEX & CHAT & ~filters.edited
 
 
 async def get_and_post(paste_url: str):
