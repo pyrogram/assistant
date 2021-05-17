@@ -23,7 +23,7 @@
 import time
 from datetime import datetime
 from configparser import ConfigParser
-from pyrogram import Client, Message
+from pyrogram import Client
 from pyrogram import __version__
 from pyrogram.raw.all import layer
 from pyrogram.types import Message

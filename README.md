@@ -27,6 +27,9 @@ learn more about these topics.
    api_id = 12345
    api_hash = 0123456789abcdef0123456789abcdef
    bot_token = 123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11
+
+   [assistant]
+   chats = -1001234567890, -1234567
    ```
 5. Run with `python -m assistant`.
 6. Stop with <kbd>CTRL+C</kbd> and `deactivate` the virtual environment.
