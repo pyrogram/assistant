@@ -31,4 +31,4 @@ learn more about these topics.
 
 ## License
 
-MIT © 2019-2020 [Dan](//github.com/delivrance)
+MIT © 2019-present [Dan](//github.com/delivrance)
