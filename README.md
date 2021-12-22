@@ -1,7 +1,5 @@
 # Pyrogram Assistant
 
-<img src="https://i.imgur.com/JyxrStE.png" width="160" align="right">
-
 > The assistant bot that helps people with [Pyrogram](//github.com/pyrogram/pyrogram) directly on Telegram.
 
 This repository contains the source code of [@PyrogramBot](//t.me/pyrogrambot) and the instructions for running a
